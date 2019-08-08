@@ -16,7 +16,7 @@
 #=========================================================================
 
 cmake_minimum_required(VERSION 3.0)
-project(CalibDepthPose)
+project(CalibrationDepthPose)
 
 option(BUILD_SYNTHETIC_DATA "Build the synthetic data generator project" ON)
 
@@ -24,22 +24,22 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 find_package(Eigen3 REQUIRED)
-#find_package(PCL REQUIRED)
+find_package(PCL REQUIRED)
 find_package(Ceres REQUIRED)
 
-#add_definitions(${PCL_DEFINITIONS})
+add_definitions(${PCL_DEFINITIONS})
 
-set(SOURCES_DIR calibDepthPose)
-
-
+set(SOURCES_DIR CalibrationDepthPose)
 # Headers
 set(${PROJECT_NAME}_headers
     ${SOURCES_DIR}/calibDepthPose.h
+    ${SOURCES_DIR}/pclUtils.h
     )
 
 # Sources
 set(${PROJECT_NAME}_sources
     ${SOURCES_DIR}/calibDepthPose.cxx
+    ${SOURCES_DIR}/pclUtils.cxx
     )
 
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_headers} ${${PROJECT_NAME}_sources})
@@ -49,13 +49,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     )
 
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
-    #${PCL_INCLUDE_DIRS}
+    ${PCL_INCLUDE_DIRS}
     ${CERES_INCLUDE_DIRS}
     )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
     ${CERES_LIBRARIES}
-    #${PCL_LIBRARIES}
+    ${PCL_LIBRARIES}
     Eigen3::Eigen
     )
 

@@ -16,11 +16,12 @@
 #=========================================================================
 
 find_package(VTK REQUIRED)
-include(${VTK_USE_FILE})
 find_package(PCL REQUIRED)
 find_package(kwiver REQUIRED)
-add_definitions(${PCL_DEFINITIONS})
 
+include(${VTK_USE_FILE})
+
+add_definitions(${PCL_DEFINITIONS})
 
 set(targetName "SyntheticDataGenerator")
 
@@ -40,7 +41,7 @@ target_include_directories(${targetName} SYSTEM PUBLIC
     )
 
 target_link_libraries(${targetName} PRIVATE
-    CalibrationDepthPose
+    CalibDepthPose
     ${PCL_LIBRARIES}
     ${VTK_LIBRARIES}
     ${KWIVER_LIBRARIES}
