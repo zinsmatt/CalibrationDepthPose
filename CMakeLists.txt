@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(CalibDepthPose)
 
-option(BUILD_EXAMPLE "Build the example project" ON)
+option(BUILD_SYNTHETIC_DATA "Build the synthetic data generator project" ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
@@ -42,8 +42,8 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     Eigen3::Eigen
     )
 
-if (BUILD_EXAMPLE)
-    add_subdirectory(example)
-endif (BUILD_EXAMPLE)
+if (BUILD_SYNTHETIC_DATA)
+    add_subdirectory(SyntheticDataGenerator)
+endif (BUILD_SYNTHETIC_DATA)
 
 
