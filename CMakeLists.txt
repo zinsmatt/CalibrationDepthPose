@@ -43,7 +43,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     )
 
 if (BUILD_SYNTHETIC_DATA)
-    add_subdirectory(SyntheticDataGenerator)
+    add_subdirectory(syntheticDataGenerator)
 endif (BUILD_SYNTHETIC_DATA)
 
 
