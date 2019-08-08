@@ -15,28 +15,14 @@
 // limitations under the License.
 //=========================================================================
 
-
-#ifndef PCLUTILS_H
-#define PCLUTILS_H
-
-#include <pcl/kdtree/kdtree_flann.h>
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
+#include "calibParameters.h"
 
 namespace CalibrationDepthPose
 {
 
-using Point = pcl::PointXYZ;
-using Pointcloud = pcl::PointCloud<Point>;
-using KDTree = pcl::KdTreeFLANN<Point>;
-
-/**
- * @brief voxelizePointcloud
- * @param pc input pointcloud
- * @param voxelSize
- */
-void voxelGridFilter(Pointcloud::Ptr& pc, double voxelSize);
+CalibParameters::CalibParameters()
+{
 
 }
 
-#endif // PCLUTILS_H
+}

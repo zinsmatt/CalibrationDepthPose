@@ -18,12 +18,22 @@
 #ifndef CALIBDEPTHPOSE_H
 #define CALIBDEPTHPOSE_H
 
+#include <Eigen/Dense>
+
+#include "pclUtils.h"
+
+namespace CalibrationDepthPose
+{
+
 
 class CalibDepthPose
 {
 
+  Eigen::Isometry3d calibrate();
 
+  std::vector<Eigen::Isometry3d> poses;         // list of poses
+  std::vector<Pointcloud::Ptr> pointclouds;     // list of pointclouds
 };
 
-
+}
 #endif // CALIBDEPTHPOSE_H

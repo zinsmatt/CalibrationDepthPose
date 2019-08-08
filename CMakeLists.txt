@@ -33,12 +33,16 @@ set(SOURCES_DIR CalibrationDepthPose)
 # Headers
 set(${PROJECT_NAME}_headers
     ${SOURCES_DIR}/calibDepthPose.h
+    ${SOURCES_DIR}/calibParameters.h
+    ${SOURCES_DIR}/calibTools.h
     ${SOURCES_DIR}/pclUtils.h
     )
 
 # Sources
 set(${PROJECT_NAME}_sources
     ${SOURCES_DIR}/calibDepthPose.cxx
+    ${SOURCES_DIR}/calibParameters.cxx
+    ${SOURCES_DIR}/calibTools.cxx
     ${SOURCES_DIR}/pclUtils.cxx
     )
 

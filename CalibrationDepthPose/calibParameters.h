@@ -15,28 +15,35 @@
 // limitations under the License.
 //=========================================================================
 
+#ifndef CALIBPARAMETERS_H
+#define CALIBPARAMETERS_H
 
-#ifndef PCLUTILS_H
-#define PCLUTILS_H
-
-#include <pcl/kdtree/kdtree_flann.h>
-#include <pcl/point_cloud.h>
-#include <pcl/point_types.h>
+#include <string>
 
 namespace CalibrationDepthPose
 {
 
-using Point = pcl::PointXYZ;
-using Pointcloud = pcl::PointCloud<Point>;
-using KDTree = pcl::KdTreeFLANN<Point>;
+enum class DistanceType
+{
+  POINT_TO_POINT,
+  POINT_TO_PLANE
+};
 
-/**
- * @brief voxelizePointcloud
- * @param pc input pointcloud
- * @param voxelSize
- */
-void voxelGridFilter(Pointcloud::Ptr& pc, double voxelSize);
+struct CalibParameters
+{
+public:
+  CalibParameters();
+
+  void loadFromFile(std::string const& filename);
+
+public:
+  DistanceType distanceType;
+  double matchingMaxDistance;
+  double matchingRequiredNbNeighbours;
+  double matchingPlaneDiscriminatorThreshold;
+
+};
 
 }
 
-#endif // PCLUTILS_H
+#endif // CALIBPARAMETERS_H
