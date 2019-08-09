@@ -19,6 +19,7 @@ cmake_minimum_required(VERSION 3.0)
 project(CalibrationDepthPose)
 
 option(BUILD_SYNTHETIC_DATA "Build the synthetic data generator project" ON)
+option(BUILD_EXAMPLE "Build the synthetic example project" ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
@@ -32,9 +33,11 @@ add_definitions(${PCL_DEFINITIONS})
 set(SOURCES_DIR CalibrationDepthPose)
 # Headers
 set(${PROJECT_NAME}_headers
+    ${SOURCES_DIR}/calibCostFunctions.h
     ${SOURCES_DIR}/calibDepthPose.h
     ${SOURCES_DIR}/calibParameters.h
     ${SOURCES_DIR}/calibTools.h
+    ${SOURCES_DIR}/matchingMatrix.h
     ${SOURCES_DIR}/pclUtils.h
     )
 
@@ -43,18 +46,17 @@ set(${PROJECT_NAME}_sources
     ${SOURCES_DIR}/calibDepthPose.cxx
     ${SOURCES_DIR}/calibParameters.cxx
     ${SOURCES_DIR}/calibTools.cxx
+    ${SOURCES_DIR}/matchingMatrix.cxx
     ${SOURCES_DIR}/pclUtils.cxx
     )
 
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_headers} ${${PROJECT_NAME}_sources})
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-    ${SOURCE_DIR}
-    )
 
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
     ${PCL_INCLUDE_DIRS}
     ${CERES_INCLUDE_DIRS}
+    ${SOURCES_DIR}
     )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC
@@ -66,5 +68,9 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 if (BUILD_SYNTHETIC_DATA)
     add_subdirectory(syntheticDataGenerator)
 endif (BUILD_SYNTHETIC_DATA)
+
+if (BUILD_EXAMPLE)
+    add_subdirectory(example)
+endif (BUILD_EXAMPLE)
 
 

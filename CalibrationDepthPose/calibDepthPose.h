@@ -20,19 +20,54 @@
 
 #include <Eigen/Dense>
 
+#include "matchingMatrix.h"
 #include "pclUtils.h"
+
+class CalibParameters;
 
 namespace CalibrationDepthPose
 {
 
+struct CalibrationRaw
+{
+  double qw, qx, qy, qz, x, y, z;
+
+  const Eigen::Isometry3d& toIsometry3d() const {
+    return Eigen::Translation3d(x, y, z) * Eigen::Quaterniond(qw, qx, qy, qz);
+  }
+
+  void fromIsometry3d(Eigen::Isometry3d const& h) {
+    Eigen::Quaterniond q(h.rotation());
+    qw = q.w(); qx = q.x(); qy = q.y(); qz = q.z();
+    x = h.translation().x();
+    y = h.translation().y();
+    z = h.translation().z();
+  }
+
+  double* data() {
+    return reinterpret_cast<double*>(this);
+  }
+};
+
+std::ostream& operator <<(std::ostream& os, CalibrationRaw const& calib);
+
+
 
 class CalibDepthPose
 {
+public:
+  CalibDepthPose(std::vector<Pointcloud::Ptr> const& pointclouds, std::vector<Eigen::Isometry3d> const& poses, Eigen::Isometry3d const& initial_calib);
+  Eigen::Isometry3d calibrate(CalibParameters *params);
 
-  Eigen::Isometry3d calibrate();
+  MatchingMatrix& getMatchingMatrix() {
+    return m_matchMatrix;
+  }
 
-  std::vector<Eigen::Isometry3d> poses;         // list of poses
-  std::vector<Pointcloud::Ptr> pointclouds;     // list of pointclouds
+private:
+  std::vector<Pointcloud::Ptr> m_pointclouds;     // list of pointclouds
+  std::vector<Eigen::Isometry3d> m_poses;         // list of poses
+  MatchingMatrix m_matchMatrix;
+  CalibrationRaw m_calib;
 };
 
 }

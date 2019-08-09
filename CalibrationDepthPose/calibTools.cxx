@@ -24,11 +24,10 @@
 
 namespace CalibrationDepthPose
 {
-
 std::tuple<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>>
 matchPointClouds(Pointcloud::Ptr pc1, Pointcloud::Ptr pc2,
                  const Eigen::Isometry3d &pose1, const Eigen::Isometry3d &pose2,
-                 CalibParameters const* params, bool reciprocal)
+                 CalibParameters const* params)
 {
   Pointcloud::Ptr pc1_world(new Pointcloud);
   Pointcloud::Ptr pc2_world(new Pointcloud);
@@ -48,20 +47,6 @@ matchPointClouds(Pointcloud::Ptr pc1, Pointcloud::Ptr pc2,
       pts2.emplace_back(pc2->points[j].x, pc2->points[j].y, pc2->points[j].z);
       normals.emplace_back(0, 0, 0);
     }
-
-    if (reciprocal)
-    {
-      KDTree::Ptr kdtree1_world(new KDTree);
-      kdtree1_world->setInputCloud(pc1);
-      for (size_t i = 0; i < pc2_world->size(); ++i)
-      {
-        auto j = matchPointToPoint(pc2_world->points[i], kdtree1_world,
-                                   params->matchingMaxDistance);
-        pts1.emplace_back(pc2->points[i].x, pc2->points[i].y, pc2->points[i].z);
-        pts2.emplace_back(pc1->points[j].x, pc1->points[j].y, pc1->points[j].z);
-        normals.emplace_back(0, 0, 0);
-      }
-    }
   }
   else if (params->distanceType == DistanceType::POINT_TO_PLANE)
   {
@@ -73,21 +58,6 @@ matchPointClouds(Pointcloud::Ptr pc1, Pointcloud::Ptr pc2,
       pts1.emplace_back(pc1->points[i].x, pc1->points[i].y, pc1->points[i].z);
       pts2.emplace_back(point);
       normals.emplace_back(pose2.rotation().inverse() * normal);
-    }
-
-    if (reciprocal)
-    {
-      KDTree::Ptr kdtree1_world(new KDTree);
-      kdtree1_world->setInputCloud(pc1);
-      for (size_t i = 0; i < pc2_world->size(); ++i)
-      {
-        auto [res, point, normal]
-            = matchPointToPlane(pc2_world->points[i], kdtree1_world, params->matchingMaxDistance,
-            params->matchingRequiredNbNeighbours, params->matchingPlaneDiscriminatorThreshold);
-        pts1.emplace_back(pc2->points[i].x, pc2->points[i].y, pc2->points[i].z);
-        pts2.emplace_back(point);
-        normals.emplace_back(pose1.rotation().inverse() * normal);
-      }
     }
   }
   return std::make_tuple(std::move(pts1), std::move(pts2), std::move(normals));

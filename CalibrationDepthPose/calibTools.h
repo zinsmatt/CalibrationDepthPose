@@ -40,7 +40,7 @@ namespace CalibrationDepthPose
  */
 std::tuple<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>>
 matchPointClouds(Pointcloud::Ptr pc1, Pointcloud::Ptr pc2, Eigen::Isometry3d const& pose1,
-                 Eigen::Isometry3d const& pose2, const CalibParameters *params, bool reciprocal);
+                 Eigen::Isometry3d const& pose2, const CalibParameters *params);
 
 
 /**
