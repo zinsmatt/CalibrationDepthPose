@@ -90,7 +90,7 @@ matchPointClouds(Pointcloud::Ptr pc1, Pointcloud::Ptr pc2,
       }
     }
   }
-  return std::make_tuple(pts1, pts2, normals);
+  return std::make_tuple(std::move(pts1), std::move(pts2), std::move(normals));
 }
 
 
