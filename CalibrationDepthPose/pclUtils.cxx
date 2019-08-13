@@ -18,6 +18,7 @@
 
 #include "pclUtils.h"
 
+#include <pcl/common/transforms.h>
 #include <pcl/features/normal_3d_omp.h>
 #include <pcl/filters/voxel_grid.h>
 
@@ -30,8 +31,15 @@ void voxelGridFilter(Pointcloud::Ptr& pc, double voxelSize)
   pcl::VoxelGrid<Point> vox_grid;
   vox_grid.setInputCloud(pc);
   vox_grid.setLeafSize(voxelSize, voxelSize, voxelSize);
-  pcl::PointCloud<pcl::PointXYZ>::Ptr tempCloud (new pcl::PointCloud<pcl::PointXYZ>);
+  Pointcloud::Ptr tempCloud (new Pointcloud);
   vox_grid.filter(*tempCloud);
+  pc.swap(tempCloud);
+}
+
+void transform(Pointcloud::Ptr &pc, const Eigen::Isometry3d &H)
+{
+  Pointcloud::Ptr tempCloud (new Pointcloud);
+  pcl::transformPointCloud(*pc, *tempCloud, H.matrix().cast<float>());
   pc.swap(tempCloud);
 }
 

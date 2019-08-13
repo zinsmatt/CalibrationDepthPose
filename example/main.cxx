@@ -94,12 +94,20 @@ int main(int argc, char* argv[])
   params.matchingRequiredNbNeighbours = 10;
 
   std::cout << "Start calibration" << std::endl;
-  CalibDepthPose calibration(pointclouds, poses, Eigen::Translation3d(0.1, 0, 0) * Eigen::Quaterniond(1.0, 0.0, 0.0, 0.0));
+  Eigen::Isometry3d calib = Eigen::Translation3d(0.1, 0, 0) * Eigen::Quaterniond(1.0, 0.0, 0.0, 0.0);
+  CalibDepthPose calibration(pointclouds, poses, calib);
   calibration.getMatchingMatrix().addMatch(0, 1, true);
   calibration.getMatchingMatrix().addMatch(1, 2, true);
   calibration.getMatchingMatrix().addMatch(2, 3, true);
   calibration.getMatchingMatrix().addMatch(3, 0, true);
-  calibration.calibrate(10, &params);
+  calib = calibration.calibrate(10, &params);
+
+  for (int i = 0; i < pointclouds.size(); ++i)
+  {
+    transform(pointclouds[i], poses[i] * calib);
+    pcl::io::savePLYFile("pc_" + std::to_string(i) + "_world.ply", *pointclouds[i]);
+  }
+
 
   return 0;
 }

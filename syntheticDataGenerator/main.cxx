@@ -68,6 +68,7 @@ int main(int argc, char* argv[])
     std::cerr << "Output directory does not exist" << std::endl;
     return -1;
   }
+  output_directory = fs::absolute(output_directory);
 
   vtkSmartPointer<vtkCamera> camera = vtkSmartPointer<vtkCamera>::New();
   camera->SetPosition(0, -4, 0);

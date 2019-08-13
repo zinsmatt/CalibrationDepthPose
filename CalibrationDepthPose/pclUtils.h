@@ -19,6 +19,8 @@
 #ifndef PCLUTILS_H
 #define PCLUTILS_H
 
+#include <Eigen/Dense>
+
 #include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
@@ -36,6 +38,13 @@ using KDTree = pcl::KdTreeFLANN<Point>;
  * @param voxelSize
  */
 void voxelGridFilter(Pointcloud::Ptr& pc, double voxelSize);
+
+/**
+ * @brief transform a pointcloud with an rigi transform
+ * @param pc
+ * @param H
+ */
+void transform(Pointcloud::Ptr& pc, Eigen::Isometry3d const& H);
 
 }
 
