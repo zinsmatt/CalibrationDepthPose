@@ -75,7 +75,7 @@ void CalibDepthPose::calibIteration(CalibParameters *params)
       auto [pts1, pts2, normals] = matchPointClouds(m_pointclouds[idx1], m_pointclouds[idx2],
           m_poses[idx1] * m_calib.toIsometry3d() , m_poses[idx2] * m_calib.toIsometry3d(), params);
       nbTotalMatches += pts1.size();
-//      saveMatches(pts1, pts2, "matches_" + std::to_string(idx1) + "_" + std::to_string(idx2) + ".obj");
+// saveMatches(pts1, pts2, "matches_" + std::to_string(idx1) + "_" + std::to_string(idx2) + ".obj");
 
       keep_pts1.emplace_back(std::move(pts1));
       keep_pts2.emplace_back(std::move(pts2));
@@ -92,8 +92,10 @@ void CalibDepthPose::calibIteration(CalibParameters *params)
   {
     for (size_t i = 0; i < keep_pts1[matchIdx].size(); ++i)
     {
-      ceres::CostFunction* cost_function = CalibrationResiduals::Create(keep_pts1[matchIdx][i], keep_pts2[matchIdx][i],
-                                                                        keep_normals[matchIdx][i], keep_posesDiff[matchIdx]);
+      ceres::CostFunction* cost_function = CalibrationResiduals::Create(keep_pts1[matchIdx][i],
+                                                                        keep_pts2[matchIdx][i],
+                                                                        keep_normals[matchIdx][i],
+                                                                        keep_posesDiff[matchIdx]);
       problem.AddResidualBlock(cost_function, nullptr, m_calib.data());
     }
   }

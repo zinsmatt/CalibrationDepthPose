@@ -25,7 +25,8 @@ namespace  {
   // Tool function to force regular faces
   void convertMeshToRegularFaces(kwiver::vital::mesh_sptr mesh)
   {
-    std::unique_ptr< kwiver::vital::mesh_regular_face_array<3> > regular_faces(new kwiver::vital::mesh_regular_face_array<3>);
+    std::unique_ptr< kwiver::vital::mesh_regular_face_array<3> >
+        regular_faces(new kwiver::vital::mesh_regular_face_array<3>);
     for (size_t i = 0; i < mesh->faces().size(); ++i)
     {
       kwiver::vital::mesh_regular_face<3> f;
@@ -40,9 +41,12 @@ namespace  {
 }
 
 
-DepthMapRenderer::DepthMapRenderer(const std::string &mesh_filename, double f, unsigned int width, unsigned int height) :
-  intrinsics(new kwiver::vital::simple_camera_intrinsics(f, {height / 2, width / 2}, 1.0, 0.0, {}, width, height)),
-  camera(new kwiver::vital::simple_camera_perspective(kwiver::vital::vector_3d::Zero(), kwiver::vital::rotation_d(), intrinsics))
+DepthMapRenderer::DepthMapRenderer(const std::string &mesh_filename, double f,
+                                   unsigned int width, unsigned int height) :
+  intrinsics(new kwiver::vital::simple_camera_intrinsics(f, {height / 2, width / 2},
+                                                         1.0, 0.0, {}, width, height)),
+  camera(new kwiver::vital::simple_camera_perspective(kwiver::vital::vector_3d::Zero(),
+                                                      kwiver::vital::rotation_d(), intrinsics))
 {
   fs::path filePath(mesh_filename);
 
