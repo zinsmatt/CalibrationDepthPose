@@ -14,3 +14,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //=========================================================================
+
+#ifndef CALIBPARAMETERS_H
+#define CALIBPARAMETERS_H
+
+#include <string>
+
+namespace CalibrationDepthPose
+{
+
+enum class DistanceType
+{
+  POINT_TO_POINT,
+  POINT_TO_PLANE
+};
+
+struct CalibParameters
+{
+public:
+  CalibParameters();
+
+  void loadFromFile(std::string const& filename);
+
+public:
+  DistanceType distanceType;
+  double matchingMaxDistance;
+  double matchingRequiredNbNeighbours;
+  double matchingPlaneDiscriminatorThreshold;
+
+};
+
+}
+
+#endif // CALIBPARAMETERS_H
