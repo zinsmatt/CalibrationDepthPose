@@ -18,7 +18,7 @@
 #include "calibDepthPose.h"
 
 #include "calibCostFunctions.h"
-#include "calibTools.h"
+#include "matchingTools.h"
 
 namespace CalibrationDepthPose
 {

@@ -33,7 +33,7 @@ struct CalibrationRaw
 {
   double qw, qx, qy, qz, x, y, z;
 
-  const Eigen::Isometry3d& toIsometry3d() const {
+  Eigen::Isometry3d toIsometry3d() const {
     return Eigen::Translation3d(x, y, z) * Eigen::Quaterniond(qw, qx, qy, qz);
   }
 
