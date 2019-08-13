@@ -57,21 +57,28 @@ std::ostream& operator <<(std::ostream& os, CalibrationRaw const& calib);
 class CalibDepthPose
 {
 public:
-  CalibDepthPose(std::vector<Pointcloud::Ptr> const& pointclouds, std::vector<Eigen::Isometry3d> const& poses, Eigen::Isometry3d const& initial_calib);
+  CalibDepthPose(std::vector<Pointcloud::Ptr> const& pointclouds,
+                 std::vector<Eigen::Isometry3d> const& poses,
+                 Eigen::Isometry3d const& initial_calib);
+
    Eigen::Isometry3d calibrate(int nbIterations, CalibParameters *params);
 
   MatchingMatrix& getMatchingMatrix() {
     return m_matchMatrix;
   }
 
-protected:
   void calibIteration(CalibParameters *params);
+
+  Eigen::Isometry3d getCurrentCalibration() const {
+    return m_calib.toIsometry3d();
+  }
 
 private:
   std::vector<Pointcloud::Ptr> m_pointclouds;     // list of pointclouds
   std::vector<Eigen::Isometry3d> m_poses;         // list of poses
   MatchingMatrix m_matchMatrix;
-  CalibrationRaw m_calib;
+  CalibrationRaw m_calib;     // current estimate of the calibration
+                              // (it is the pose of the camera in the other sensor frame)
 };
 
 }

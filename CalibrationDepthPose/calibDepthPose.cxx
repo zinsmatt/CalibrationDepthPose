@@ -31,7 +31,7 @@ void saveMatches(std::vector<Eigen::Vector3d> const& pts1,
                  std::string const& filename)
 {
   std::ofstream file(filename);
-  for (int i = 0; i < pts1.size(); ++i)
+  for (size_t i = 0; i < pts1.size(); ++i)
   {
     file << "v " << pts1[i].x() << " " << pts1[i].y() << " " << pts1[i].z() << "\n";
     file << "v " << pts2[i].x() << " " << pts2[i].y() << " " << pts2[i].z() << "\n";
@@ -115,8 +115,7 @@ void CalibDepthPose::calibIteration(CalibParameters *params)
   ceres::Solve(options, &problem, &summary);
   std::cout << summary.BriefReport() << std::endl;
 
-  std::cout << "Final estimation :\n";
-  std::cout << "====> " <<  m_calib << std::endl;
+  std::cout << "Calibration estimation: " << m_calib << std::endl;
 
 }
 

@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 {
   if (argc < 3)
   {
-    std::cerr << "Usage:\n\tCalibDepthPoseExample mesh_file out_dir" << std::endl;
+    std::cerr << "Usage:\n\tSyntheticDataGenerator mesh_file out_dir" << std::endl;
     return -1;
   }
   else
@@ -94,8 +94,7 @@ int main(int argc, char* argv[])
   }
   else
   {
-    std::cerr << "Mesh format not supported: " << mesh_filename.extension() << std::endl;
-    return -1;
+    throw std::runtime_error("Mesh format not supported: " + mesh_filename.extension().generic_string());
   }
 
   // Read the mesh file
@@ -113,7 +112,7 @@ int main(int argc, char* argv[])
   unsigned int width = renderer->GetSize()[0];
   unsigned int height = renderer->GetSize()[1];
   double fx = static_cast<double>(width)  / (2 * std::tan(angle / 2));
-  double fy = static_cast<double>(height) / (2 * std::tan(angle / 2));
+  //double fy = static_cast<double>(height) / (2 * std::tan(angle / 2));
 
 
   vtkSmartPointer<KeyPressInteractorStyle> style = vtkSmartPointer<KeyPressInteractorStyle>::New(); //like paraview

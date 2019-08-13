@@ -36,11 +36,21 @@ void voxelGridFilter(Pointcloud::Ptr& pc, double voxelSize)
   pc.swap(tempCloud);
 }
 
-void transform(Pointcloud::Ptr &pc, const Eigen::Isometry3d &H)
+
+void transformInPlace(Pointcloud::Ptr &pc, const Eigen::Isometry3d &H)
 {
   Pointcloud::Ptr tempCloud (new Pointcloud);
   pcl::transformPointCloud(*pc, *tempCloud, H.matrix().cast<float>());
   pc.swap(tempCloud);
 }
+
+
+Pointcloud::Ptr transform(Pointcloud::Ptr pc, Eigen::Isometry3d const& H)
+{
+  Pointcloud::Ptr tempCloud (new Pointcloud);
+  pcl::transformPointCloud(*pc, *tempCloud, H.matrix().cast<float>());
+  return tempCloud;
+}
+
 
 }
