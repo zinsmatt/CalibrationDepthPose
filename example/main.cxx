@@ -21,18 +21,6 @@
 #include <memory>
 #include <sstream>
 
-#include <vtkActor.h>
-#include <vtkAxesActor.h>
-#include <vtkCamera.h>
-#include <vtkMath.h>
-#include <vtkOBJReader.h>
-#include <vtkOrientationMarkerWidget.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkPLYReader.h>
-#include <vtkRenderer.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkSmartPointer.h>
 
 #include <pcl/point_cloud.h>
 #include <pcl/io/ply_io.h>
