@@ -1,4 +1,6 @@
 # Calibration Depth Pose
 
-Add animation of calibration
+Suppose you have a depth camera and another sensor which gives you poses (position + orientation).
+This library enables you to find the relative calibration of these two sensors.
 
+![Calibration Animation](doc/calibration_anim.gif "Calibration iterations")
