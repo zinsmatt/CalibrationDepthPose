@@ -26,8 +26,10 @@
 #include <pcl/io/ply_io.h>
 
 #include "calibDepthPose.h"
+#include "calibParameters.h"
 
 namespace fs = std::filesystem;
+using namespace CalibrationDepthPose;
 
 std::istream& operator >>(std::istream &is, Eigen::Isometry3d& pose)
 {
@@ -40,7 +42,7 @@ std::istream& operator >>(std::istream &is, Eigen::Isometry3d& pose)
 int main(int argc, char* argv[])
 {
 
-  std::string filename("/home/matthieu/dev/CalibrationDepthPose/build/dataset.txt");
+  std::string filename("/home/matt/dev/CalibrationDepthPose/data/dataset.txt");
 
   std::ifstream dataset_file(filename);
   std::string pose_filename;
@@ -61,7 +63,7 @@ int main(int argc, char* argv[])
   for (auto const& s : pc_files)
   {
     CalibrationDepthPose::Pointcloud::Ptr pc(new CalibrationDepthPose::Pointcloud());
-    if (!pcl::io::loadPLYFile(s, *pc))
+    if (pcl::io::loadPLYFile(s, *pc) != 0)
     {
       throw std::runtime_error("Could not load point cloud: " + s);
     }
@@ -85,9 +87,19 @@ int main(int argc, char* argv[])
   }
 
 
+  CalibParameters params;
+  params.distanceType = DistanceType::POINT_TO_PLANE;
+  params.matchingMaxDistance = 0.1;
+  params.matchingPlaneDiscriminatorThreshold = 0.8;
+  params.matchingRequiredNbNeighbours = 10;
 
-
-  CalibrationDepthPose::CalibDepthPose calibration(pointclouds, poses, Eigen::Isometry3d::Identity());
+  std::cout << "Start calibration" << std::endl;
+  CalibDepthPose calibration(pointclouds, poses, Eigen::Translation3d(0.1, 0, 0) * Eigen::Quaterniond(1.0, 0.0, 0.0, 0.0));
+  calibration.getMatchingMatrix().addMatch(0, 1, true);
+  calibration.getMatchingMatrix().addMatch(1, 2, true);
+  calibration.getMatchingMatrix().addMatch(2, 3, true);
+  calibration.getMatchingMatrix().addMatch(3, 0, true);
+  calibration.calibrate(10, &params);
 
   return 0;
 }

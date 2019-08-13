@@ -17,9 +17,30 @@
 
 #include "calibDepthPose.h"
 
+#include <fstream>
+
 #include "calibCostFunctions.h"
 #include "matchingTools.h"
 
+
+namespace
+{
+
+void saveMatches(std::vector<Eigen::Vector3d> const& pts1,
+                 std::vector<Eigen::Vector3d> const& pts2,
+                 std::string const& filename)
+{
+  std::ofstream file(filename);
+  for (int i = 0; i < pts1.size(); ++i)
+  {
+    file << "v " << pts1[i].x() << " " << pts1[i].y() << " " << pts1[i].z() << "\n";
+    file << "v " << pts2[i].x() << " " << pts2[i].y() << " " << pts2[i].z() << "\n";
+    file << "l " << 1 + 2 * i << " " << 1 + 2 * i + 1 << "\n";
+  }
+  file.close();
+}
+
+}
 namespace CalibrationDepthPose
 {
 
@@ -31,18 +52,31 @@ CalibDepthPose::CalibDepthPose(const std::vector<Pointcloud::Ptr> &pointclouds,
   m_calib.fromIsometry3d(initial_calib);
 }
 
-Eigen::Isometry3d CalibDepthPose::calibrate(CalibParameters *params)
+Eigen::Isometry3d CalibDepthPose::calibrate(int nbIterations, CalibParameters *params)
+{
+  for (int i = 0; i < nbIterations; ++i)
+  {
+    this->calibIteration(params);
+  }
+  return m_calib.toIsometry3d();
+}
+
+void CalibDepthPose::calibIteration(CalibParameters *params)
 {
   std::vector<std::vector<Eigen::Vector3d>> keep_pts1, keep_pts2, keep_normals;
   std::vector<Eigen::Isometry3d> keep_posesDiff;
+  unsigned int nbTotalMatches = 0;
   for (size_t idx1 = 0; idx1 < m_pointclouds.size(); ++idx1)
   {
     for (size_t idx2 = 0; idx2 < m_pointclouds.size(); ++idx2)
     {
-      if (idx1 == idx2)
+      if (idx1 == idx2 || !m_matchMatrix(idx1, idx2))
         continue;
       auto [pts1, pts2, normals] = matchPointClouds(m_pointclouds[idx1], m_pointclouds[idx2],
-          m_poses[idx1], m_poses[idx2], params);
+          m_poses[idx1] * m_calib.toIsometry3d() , m_poses[idx2] * m_calib.toIsometry3d(), params);
+      nbTotalMatches += pts1.size();
+//      saveMatches(pts1, pts2, "matches_" + std::to_string(idx1) + "_" + std::to_string(idx2) + ".obj");
+
       keep_pts1.emplace_back(std::move(pts1));
       keep_pts2.emplace_back(std::move(pts2));
       keep_normals.emplace_back(std::move(normals));
@@ -69,6 +103,7 @@ Eigen::Isometry3d CalibDepthPose::calibrate(CalibParameters *params)
                                 new ceres::QuaternionParameterization(),
                                 new ceres::IdentityParameterization(3)));
 
+  std::cout << "Total matches = " << nbTotalMatches << std::endl;
 
   ceres::Solver::Options options;
   options.linear_solver_type = ceres::DENSE_QR;
@@ -78,12 +113,11 @@ Eigen::Isometry3d CalibDepthPose::calibrate(CalibParameters *params)
 
   ceres::Solver::Summary summary;
   ceres::Solve(options, &problem, &summary);
-  std::cout << summary.FullReport() << std::endl;
+  std::cout << summary.BriefReport() << std::endl;
 
   std::cout << "Final estimation :\n";
   std::cout << "====> " <<  m_calib << std::endl;
 
-  return m_calib.toIsometry3d();
 }
 
 

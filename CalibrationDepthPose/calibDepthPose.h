@@ -58,11 +58,14 @@ class CalibDepthPose
 {
 public:
   CalibDepthPose(std::vector<Pointcloud::Ptr> const& pointclouds, std::vector<Eigen::Isometry3d> const& poses, Eigen::Isometry3d const& initial_calib);
-  Eigen::Isometry3d calibrate(CalibParameters *params);
+   Eigen::Isometry3d calibrate(int nbIterations, CalibParameters *params);
 
   MatchingMatrix& getMatchingMatrix() {
     return m_matchMatrix;
   }
+
+protected:
+  void calibIteration(CalibParameters *params);
 
 private:
   std::vector<Pointcloud::Ptr> m_pointclouds;     // list of pointclouds

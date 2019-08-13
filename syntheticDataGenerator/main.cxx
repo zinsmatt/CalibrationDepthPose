@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 {
   if (argc < 3)
   {
-    std::cerr << "Usage:\nCalibDepthPoseExample mesh_file out_dir" << std::endl;
+    std::cerr << "Usage:\n\tCalibDepthPoseExample mesh_file out_dir" << std::endl;
     return -1;
   }
   else

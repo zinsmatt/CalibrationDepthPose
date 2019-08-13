@@ -52,7 +52,7 @@ matchPointClouds(Pointcloud::Ptr pc1, Pointcloud::Ptr pc2,
  * @param maxDistance [in] max distance to be a match
  * @return the index of the matched point
  */
-int matchPointToPoint(Point const& p1, KDTree::Ptr kdtree2, double maxDistance);
+int matchPointToPoint(Point const& p1, KDTree::Ptr kdtree2, double maxSquareDistance);
 
 
 /**
@@ -65,7 +65,7 @@ int matchPointToPoint(Point const& p1, KDTree::Ptr kdtree2, double maxDistance);
  * @return a tuple [boolean result, point matched, normal of the plane]
  */
 std::tuple<bool, Eigen::Vector3d, Eigen::Vector3d>
-matchPointToPlane(Point const& p1, KDTree::Ptr kdtree2, double maxDistance,
+matchPointToPlane(Point const& p1, KDTree::Ptr kdtree2, double maxSquareDistance,
                   int requiredNbNeighbours, double planeDiscriminatorThreshold);
 
 
