@@ -23,10 +23,11 @@
 #include "matchingMatrix.h"
 #include "pclUtils.h"
 
-class CalibParameters;
 
 namespace CalibrationDepthPose
 {
+
+class CalibParameters;
 
 struct CalibrationRaw
 {

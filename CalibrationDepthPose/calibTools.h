@@ -23,10 +23,11 @@
 
 #include "pclUtils.h"
 
-class CalibParameters;
 
 namespace CalibrationDepthPose
 {
+
+class CalibParameters;
 
 /**
  * @brief matchPointClouds This function computes the matches between two pointclouds
@@ -39,8 +40,9 @@ namespace CalibrationDepthPose
  * @return a tuple [list of points, list of points, list of normals] containing the matchs.
  */
 std::tuple<std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>, std::vector<Eigen::Vector3d>>
-matchPointClouds(Pointcloud::Ptr pc1, Pointcloud::Ptr pc2, Eigen::Isometry3d const& pose1,
-                 Eigen::Isometry3d const& pose2, const CalibParameters *params);
+matchPointClouds(Pointcloud::Ptr pc1, Pointcloud::Ptr pc2,
+                 const Eigen::Isometry3d &pose1, const Eigen::Isometry3d &pose2,
+                 const CalibParameters *params);
 
 
 /**
