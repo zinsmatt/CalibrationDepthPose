@@ -3,7 +3,7 @@
 Suppose you have a depth camera rigidly attached to another sensor which gives you poses (position + orientation).
 This library enables you to find the relative calibration of these two sensors.
 
-### Example of calibration convergence
+## Example of calibration convergence
 
 |  |  |
 :-------------------------:|:-------------------------:
@@ -12,25 +12,57 @@ This library enables you to find the relative calibration of these two sensors.
 
 
 
-## Synthetic Data Generator
+# Synthetic Data Generator
 
-The synthetic data generator is an interactive tool to simulate depth map acquisition by a camera. The camera is assumed to be pinhole and without noise.
+```bash
+./SyntheticDataGenerator mesh_file output_dir
+```
 
-This tool generates a dataset containing the following files:
+The synthetic data generator is an interactive tool to simulate depth map acquisition by a camera. It can load a mesh in OBJ and PLY formats. The camera is assumed to be pinhole and without noise. This tool directly generates a dataset which can be used by the other tools.
+
+
+## Dataset
+A dataset contains the following files:
   - *dataset.txt*: this is the main file which contains the path of the poses file and all the pointlcoud files
   - *dataset.poses*: this file contains the list of the camera poses (one line per capture) (qw qx qy qz x y z)
   - *pc_.ply*: point cloud files
 
 
 
+# Examples
 
-## Calibration Example
+## calibrate
 
-This example shows how to use the library and synthetic data.
+This example can directly be used to process your own data. It just requires a dataset and a configuration file. It also saves the concatenation of all point clouds transformed to world coordinates using the estimated calibration at each iteration.
+
+```bash
+./calibrate dataset_file configuration_file
+
+```
 
 
-```yaml
-./CalibDepthPoseExample dataset_file nb_iterations noise_stddev configuration_file
+The configuration file contains the parameters to use for calibration.
+
+For example:
+~~~yaml
+calibration_parameters:
+  nb_iterations: 20
+  calibration_initial_guess:
+    rotation: [1.0, 0.0, 0.0, 0.0]
+    translation: [0.0, 0.0, 0.0]
+  distance_type: POINT_TO_PLANE
+  matching_max_distance: 0.1
+  matching_plane_discriminator_threshold: 0.8
+  matching_required_nb_neighbours: 10
+~~~
+
+## calibrate_synthetic_data
+
+This example shows how to use the library and synthetic data. Like the previous example, it also saves the concatenation of all point clouds transformed to world coordinates using the estimated calibration at each iteration.
+
+
+```bash
+./calibrate_synthetic_data dataset_file nb_iterations noise_stddev configuration_file
 
 ```
 

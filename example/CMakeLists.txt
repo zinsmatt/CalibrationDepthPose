@@ -17,23 +17,46 @@
 
 find_package(PCL REQUIRED)
 add_definitions(${PCL_DEFINITIONS})
-
-
-set(targetName "CalibrationDepthPoseExample")
-
 find_package(yaml-cpp)
 
 
-add_executable(${targetName}
-    main.cxx
+set(targetName1 "calibrate_synthetic_data")
+
+
+
+add_executable(${targetName1}
+    main_calibrate_synthetic_data.cxx
+    exampleUtils.cxx
+    exampleUtils.h
     )
 
-target_include_directories(${targetName} SYSTEM PRIVATE
+target_include_directories(${targetName1} SYSTEM PRIVATE
     ${PCL_INCLUDE_DIRS}
     ${YAML_CPP_INCLUDE_DIR}
     )
 
-target_link_libraries(${targetName} PRIVATE
+target_link_libraries(${targetName1} PRIVATE
+    CalibrationDepthPose
+    ${PCL_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
+    stdc++fs
+    )
+
+
+set(targetName2 "calibrate")
+
+add_executable(${targetName2}
+    main_calibrate.cxx
+    exampleUtils.cxx
+    exampleUtils.h
+    )
+
+target_include_directories(${targetName2} SYSTEM PRIVATE
+    ${PCL_INCLUDE_DIRS}
+    ${YAML_CPP_INCLUDE_DIR}
+    )
+
+target_link_libraries(${targetName2} PRIVATE
     CalibrationDepthPose
     ${PCL_LIBRARIES}
     ${YAML_CPP_LIBRARIES}
