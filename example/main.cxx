@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
   params.matchingMaxDistance = 0.1;
   params.matchingPlaneDiscriminatorThreshold = 0.8;
   params.matchingRequiredNbNeighbours = 10;
-  int nbIterations = 8;
+  int nbIterations = 20;
 
   Eigen::Isometry3d calib = Eigen::Translation3d(0.3, -0.4, -0.1)
       * Eigen::Quaterniond(0.9951613, 0.0419272, -0.0211705, 0.0863012);
