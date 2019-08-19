@@ -17,6 +17,8 @@
 
 #include <random>
 
+#include <unsupported/Eigen/EulerAngles>
+
 #include "exampleUtils.h"
 
 
@@ -75,9 +77,9 @@ ColoredPointcloud::Ptr colorizePointCloud(CalibrationDepthPose::Pointcloud::Ptr 
 Eigen::Isometry3d extractIsometry(const YAML::Node &node)
 {
   auto rot = node["rotation"].as<std::vector<double>>();
-  Eigen::Quaterniond q(rot[0], rot[1], rot[2], rot[3]);
+  Eigen::EulerAnglesXYZd r(TO_RADIANS(rot[0]), TO_RADIANS(rot[1]), TO_RADIANS(rot[2]));
   auto transl = node["translation"].as<std::vector<double>>();
-  return Eigen::Translation3d(transl[0], transl[1], transl[2]) * q;
+  return Eigen::Translation3d(transl[0], transl[1], transl[2]) * r;
 }
 
 std::pair<Eigen::Isometry3d, Eigen::Isometry3d> loadConfiguration(const std::string &filename)
@@ -90,4 +92,13 @@ std::pair<Eigen::Isometry3d, Eigen::Isometry3d> loadConfiguration(const std::str
   Eigen::Isometry3d estim_calib = extractIsometry(estim_calib_node);
 
   return std::make_pair(real_calib, estim_calib);
+}
+
+std::string printEulerAngleIsometry(const Eigen::Isometry3d &pose)
+{
+  Eigen::EulerAnglesXYZd rot(pose.rotation());
+  std::stringstream ss;
+  ss << TO_DEGREES(rot.alpha()) << " " << TO_DEGREES(rot.beta())<< " " << TO_DEGREES(rot.gamma()) << " "
+     << pose.translation().x() << " " << pose.translation().y() << " " << pose.translation().z();
+  return ss.str();
 }

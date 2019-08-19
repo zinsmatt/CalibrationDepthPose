@@ -24,14 +24,14 @@ This example can directly be used to process your own data. It just requires a [
 ```
 
 
-The configuration file contains the parameters to use for calibration.
+The configuration file contains the parameters to use for calibration. The rotation part of the initial calibration guess is expressed in Euler angles Rx Ry Rz in degrees (the rotation are compose in the same order).
 
 For example:
 ~~~yaml
 calibration_parameters:
   nb_iterations: 20
   calibration_initial_guess:
-    rotation: [1.0, 0.0, 0.0, 0.0]
+    rotation: [0.0, 0.0, 0.0]
     translation: [0.0, 0.0, 0.0]
   distance_type: POINT_TO_PLANE
   matching_max_distance: 0.1
@@ -50,21 +50,20 @@ This example shows how to use the library and synthetic data. Like the previous 
 ```
 
 
-The configuration file defines the real calibration and the initial guess for the estimated calibration.
-The example does the following steps:
- - The real calibration is applied to synthetic data, so that we obtain point clouds and poses with the real calibration between them
- - Estimate the calibration with the library starting with the given initial guess
+The configuration file just defines the real calibration that we are looking for and the initial guess that we have.
+The poses of the input dataset are transformed by the program so that they include the real calibration. This calibration is then tried to be estimated using the library algorithms. In each calibration, the rotation part is expressed in Euler angles Rx, Ry, Rz in degrees (the rotation are made in the same order).
 
 ~~~yaml
 real_calibration:
-  rotation: [0.9872283, 0.0806561, 0.1336749, -0.0317164]
+  rotation: [0.2, 0.0, -0.4]
   translation: [-0.2, -0.1, 0.05]
 
 estimated_calibration:
-  rotation: [1.0, 0.0, 0.0, 0.0]
+  rotation: [0.0, 0.0, 0.0]
   translation: [0, 0, 0]
 
 ~~~
+
 
 
 ## Synthetic Data Generator

@@ -23,6 +23,10 @@
 
 #include "pclUtils.h"
 
+#define TO_RADIANS(x) x * 0.01745329251
+#define TO_DEGREES(x) x * 57.2957795131
+
+
 using ColoredPoint = pcl::PointXYZRGB;
 using ColoredPointcloud = pcl::PointCloud<ColoredPoint>;
 
@@ -49,5 +53,8 @@ Eigen::Isometry3d extractIsometry(YAML::Node const& node);
 /// Load configuration from YAML file
 std::pair<Eigen::Isometry3d, Eigen::Isometry3d> loadConfiguration(std::string const& filename);
 
+
+/// Return a string representation of the isometry using Euler angle (Rx Ry Rz) for the orietation
+std::string printEulerAngleIsometry(Eigen::Isometry3d const& pose);
 
 #endif // EXAMPLEUTILS_H

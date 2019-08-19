@@ -1,7 +1,7 @@
 calibration_parameters:
   nb_iterations: 20
   calibration_initial_guess:
-    rotation: [1.0, 0.0, 0.0, 0.0]
+    rotation: [0.0, 0.0, 0.0]
     translation: [0.0, 0.0, 0.0]
   distance_type: POINT_TO_PLANE
   matching_max_distance: 0.1
