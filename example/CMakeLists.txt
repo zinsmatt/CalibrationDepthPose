@@ -21,6 +21,7 @@ add_definitions(${PCL_DEFINITIONS})
 
 set(targetName "CalibrationDepthPoseExample")
 
+find_package(yaml-cpp)
 
 
 add_executable(${targetName}
@@ -29,10 +30,12 @@ add_executable(${targetName}
 
 target_include_directories(${targetName} SYSTEM PRIVATE
     ${PCL_INCLUDE_DIRS}
+    ${YAML_CPP_INCLUDE_DIR}
     )
 
 target_link_libraries(${targetName} PRIVATE
     CalibrationDepthPose
     ${PCL_LIBRARIES}
+    ${YAML_CPP_LIBRARIES}
     stdc++fs
     )

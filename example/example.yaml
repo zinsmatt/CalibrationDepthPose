@@ -1,0 +1,7 @@
+real_calibration:
+  rotation: [0.9872283, 0.0806561, 0.1336749, -0.0317164]
+  translation: [-0.2, -0.1, 0.05]
+
+estimated_calibration:
+  rotation: [1.0, 0.0, 0.0, 0.0]
+  translation: [0, 0, 0]

@@ -17,6 +17,7 @@
 
 #include <cmath>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <memory>
 #include <random>
@@ -26,6 +27,7 @@
 
 #include <pcl/point_cloud.h>
 #include <pcl/io/ply_io.h>
+#include <yaml-cpp/yaml.h>
 
 #include "calibDepthPose.h"
 #include "calibParameters.h"
@@ -36,6 +38,14 @@ using namespace CalibrationDepthPose;
 using ColoredPoint = pcl::PointXYZRGB;
 using ColoredPointcloud = pcl::PointCloud<ColoredPoint>;
 
+
+std::ostream& operator <<(std::ostream& os, Eigen::Isometry3d const& pose)
+{
+  Eigen::Quaterniond q(pose.rotation());
+  os << q.w() << " " << q.x() << " " << q.y() << " " << q.z() << " "
+     << pose.translation().x() << " " << pose.translation().y() << " " << pose.translation().z();
+  return os;
+}
 
 /// Add Gaussian noise to point cloud
 void addNoise(Pointcloud::Ptr pc, double stddev)
@@ -82,6 +92,27 @@ ColoredPointcloud::Ptr colorizePointCloud(Pointcloud::Ptr pc,
   return tempCloud;
 }
 
+/// Extract an isometry transform from a YAML node
+Eigen::Isometry3d extractIsometry(YAML::Node const& node)
+{
+  auto rot = node["rotation"].as<std::vector<double>>();
+  Eigen::Quaterniond q(rot[0], rot[1], rot[2], rot[3]);
+  auto transl = node["translation"].as<std::vector<double>>();
+  return Eigen::Translation3d(transl[0], transl[1], transl[2]) * q;
+}
+
+/// Load configuration from YAML file
+std::pair<Eigen::Isometry3d, Eigen::Isometry3d> loadConfiguration(std::string const& filename)
+{
+  YAML::Node config = YAML::LoadFile(filename);
+  auto real_calib_node = config["real_calibration"];
+  auto estim_calib_node = config["estimated_calibration"];
+
+  Eigen::Isometry3d real_calib = extractIsometry(real_calib_node);
+  Eigen::Isometry3d estim_calib = extractIsometry(estim_calib_node);
+
+  return std::make_pair(real_calib, estim_calib);
+}
 
 
 int main(int argc, char* argv[])
@@ -89,12 +120,13 @@ int main(int argc, char* argv[])
   srand (time(NULL));
   pcl::console::setVerbosityLevel(pcl::console::L_ALWAYS);
 
-  if (argc < 3)
+  if (argc < 5)
   {
-    std::cerr << "Usage:\n\tCalibDepthPoseExample dataset_file noise_stddev\n" << std::endl;
+    std::cerr << "Usage:\n\tCalibDepthPoseExample dataset_file nb_iterations noise_stddev configuration_file\n" << std::endl;
     return -1;
   }
 
+  // Load dataset
   std::string filename(argv[1]);
   std::ifstream dataset_file(filename);
   if (!dataset_file.is_open())
@@ -111,15 +143,16 @@ int main(int argc, char* argv[])
   }
   dataset_file.close();
 
+  // Load pointclouds
   std::vector<CalibrationDepthPose::Pointcloud::Ptr> pointclouds;
   std::vector<Eigen::Isometry3d> poses;
   // set the noise level
   double noise_stddev = 0.0;
   try {
-    noise_stddev = std::stod(argv[2]);
+    noise_stddev = std::stod(argv[3]);
   } catch(std::exception& e) {
     std::cerr << e.what() << std::endl;
-    std::cerr << "Default noise 0.0" << std::endl;
+    std::cerr << "Default noise " << noise_stddev << std::endl;
   }
 
   for (auto const& s : pc_files)
@@ -133,6 +166,7 @@ int main(int argc, char* argv[])
     pointclouds.emplace_back(pc);
   }
 
+  // Load poses
   std::ifstream pose_file(pose_filename);
   Eigen::Isometry3d pose;
   while (pose_file >> pose)
@@ -161,13 +195,31 @@ int main(int argc, char* argv[])
   params.matchingMaxDistance = 0.1;
   params.matchingPlaneDiscriminatorThreshold = 0.8;
   params.matchingRequiredNbNeighbours = 10;
+
   int nbIterations = 20;
+  try {
+    nbIterations = std::stoi(argv[2]);
+  } catch (std::exception& e) {
+    std::cerr << e.what() << std::endl;
+    std::cerr << "Default number of iterations " << nbIterations << std::endl;
+  }
 
-  Eigen::Isometry3d calib = Eigen::Translation3d(0.3, -0.4, -0.1)
-      * Eigen::Quaterniond(0.9951613, 0.0419272, -0.0211705, 0.0863012);
 
-  std::cout << "Start calibration" << std::endl;
-  CalibDepthPose calibration(pointclouds, poses, calib);
+  auto [realCalib, estimatedCalib] = loadConfiguration(argv[4]);
+  std::cout << "\nReal calibration: " << realCalib << "\n";
+  std::cout << "Initial guess of calibration: " << estimatedCalib << std::endl;
+
+  // Update the poses to have the real calib between the camera and the poses
+  Eigen::Isometry3d realCalib_inv = realCalib.inverse();
+  for (auto& p : poses)
+  {
+    p = p * realCalib_inv;
+  }
+
+  std::cout << "\nStart calibration" << std::endl;
+  // Estimation of the calib
+//  Eigen::Isometry3d estimatedCalib = Eigen::Isometry3d::Identity();
+  CalibDepthPose calibration(pointclouds, poses, estimatedCalib);
   // Set the pairs of pointclouds used for matching
   for (size_t i = 0; i < pointclouds.size(); ++i)
   {
@@ -181,14 +233,14 @@ int main(int argc, char* argv[])
     ColoredPointcloud::Ptr concat(new ColoredPointcloud);
     for (size_t i = 0; i < pointclouds.size(); ++i)
     {
-      auto transformed_pc = transform(pointclouds[i], poses[i] * calib);
+      auto transformed_pc = transform(pointclouds[i], poses[i] * estimatedCalib);
       auto colored = colorizePointCloud(transformed_pc, colors[i][0], colors[i][1], colors[i][2]);
       *concat += *colored;
     }
     pcl::io::savePLYFile("colored_" + std::to_string(iter) + ".ply", *concat);
 
     calibration.calibIteration(&params);
-    calib = calibration.getCurrentCalibration();
+    estimatedCalib = calibration.getCurrentCalibration();
   }
 
 
@@ -196,11 +248,14 @@ int main(int argc, char* argv[])
   ColoredPointcloud::Ptr concat(new ColoredPointcloud);
   for (size_t i = 0; i < pointclouds.size(); ++i)
   {
-    auto transformed_pc = transform(pointclouds[i], poses[i] * calib);
+    auto transformed_pc = transform(pointclouds[i], poses[i] * estimatedCalib);
     auto colored = colorizePointCloud(transformed_pc, colors[i][0], colors[i][1], colors[i][2]);
     *concat += *colored;
   }
   pcl::io::savePLYFile("colored_" + std::to_string(nbIterations) + ".ply", *concat);
+
+  std::cout << "\nReal calibration: " << realCalib << "\n";
+  std::cout << "Estimated calibration: " << estimatedCalib << std::endl;
 
   return 0;
 }
