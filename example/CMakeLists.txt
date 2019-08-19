@@ -17,7 +17,7 @@
 
 find_package(PCL REQUIRED)
 add_definitions(${PCL_DEFINITIONS})
-find_package(yaml-cpp)
+find_package(yaml-cpp REQUIRED)
 
 
 set(targetName1 "calibrate_synthetic_data")
