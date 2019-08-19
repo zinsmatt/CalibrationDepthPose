@@ -1,7 +1,6 @@
 # Calibration Depth Pose
 
-Suppose you have a depth camera rigidly attached to another sensor which gives you poses (position + orientation).
-This library enables you to find the relative calibration of these two sensors.
+Suppose you have a depth camera rigidly attached to another sensor which gives a pose (position + orientation). This library enables you to find the relative calibration between these two sensors.
 
 ## Example of calibration convergence
 
@@ -12,32 +11,12 @@ This library enables you to find the relative calibration of these two sensors.
 
 
 
-# Synthetic Data Generator
 
-![Synthetic Data Generator](doc/synthetic_data_generator.png "Synthetic Data Generator")
+## Examples
 
-The synthetic data generator is an interactive tool to simulate depth map acquisition by a camera. It can load a mesh in OBJ and PLY formats. The camera is assumed to be pinhole and without noise. This tool directly generates a dataset which can be used by the other tools.
+### calibrate
 
-```bash
-./SyntheticDataGenerator mesh_file output_dir
-```
-
-
-
-
-## Dataset
-A dataset contains the following files:
-  - *dataset.txt*: this is the main file which contains the path of the poses file and all the pointlcoud files
-  - *dataset.poses*: this file contains the list of the camera poses (one line per capture) (qw qx qy qz x y z)
-  - *pc_.ply*: point cloud files
-
-
-
-# Examples
-
-## calibrate
-
-This example can directly be used to process your own data. It just requires a dataset and a configuration file. It also saves the concatenation of all point clouds transformed to world coordinates using the estimated calibration at each iteration.
+This example can directly be used to process your own data. It just requires a [dataset](#dataset) and a configuration file. It also saves the concatenation of all point clouds transformed to world coordinates using the estimated calibration at each iteration.
 
 ```bash
 ./calibrate dataset_file configuration_file
@@ -60,7 +39,7 @@ calibration_parameters:
   matching_required_nb_neighbours: 10
 ~~~
 
-## calibrate_synthetic_data
+### calibrate_synthetic_data
 
 This example shows how to use the library and synthetic data. Like the previous example, it also saves the concatenation of all point clouds transformed to world coordinates using the estimated calibration at each iteration.
 
@@ -86,3 +65,21 @@ estimated_calibration:
   translation: [0, 0, 0]
 
 ~~~
+
+
+## Synthetic Data Generator
+<img src="doc/synthetic_data_generator.png" width="346" height="321">
+
+The synthetic data generator is an interactive tool to simulate depth map acquisition by a camera. It can load a mesh in OBJ and PLY formats. The camera is assumed to be pinhole and without noise. This tool directly generates a dataset which can be used by the other tools.
+
+```bash
+./SyntheticDataGenerator mesh_file output_dir
+```
+
+
+
+### Dataset
+A dataset contains the following files:
+  - *dataset.txt*: this is the main file which contains the path of the poses file and all the pointlcoud files
+  - *dataset.poses*: this file contains the list of the camera poses (one line per capture) (qw qx qy qz x y z)
+  - *pc_.ply*: point cloud files
