@@ -81,7 +81,8 @@ int main(int argc, char* argv[])
   vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
   vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
   vtkSmartPointer<vtkRenderWindow> renWin = vtkSmartPointer<vtkRenderWindow>::New();
-  vtkSmartPointer<vtkRenderWindowInteractor> interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
+  vtkSmartPointer<vtkRenderWindowInteractor> interactor =
+      vtkSmartPointer<vtkRenderWindowInteractor>::New();
   vtkSmartPointer<vtkAbstractPolyDataReader> fileReader;
 
   if (mesh_filename.extension() == ".obj")
@@ -94,7 +95,8 @@ int main(int argc, char* argv[])
   }
   else
   {
-    throw std::runtime_error("Mesh format not supported: " + mesh_filename.extension().generic_string());
+    throw std::runtime_error("Mesh format not supported: "
+                             + mesh_filename.extension().generic_string());
   }
 
   // Read the mesh file
@@ -115,14 +117,15 @@ int main(int argc, char* argv[])
   //double fy = static_cast<double>(height) / (2 * std::tan(angle / 2));
 
 
-  vtkSmartPointer<KeyPressInteractorStyle> style = vtkSmartPointer<KeyPressInteractorStyle>::New(); //like paraview
+  vtkSmartPointer<KeyPressInteractorStyle> style = vtkSmartPointer<KeyPressInteractorStyle>::New();
 
   DepthMapRenderer dr(mesh_filename.generic_string(), fx, width, height);
   style->setDepthMapRenderer(&dr);
   style->SetOutputDirectory(output_directory);
 
   vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
-  vtkSmartPointer<vtkOrientationMarkerWidget> widget = vtkSmartPointer<vtkOrientationMarkerWidget>::New();
+  vtkSmartPointer<vtkOrientationMarkerWidget> widget =
+      vtkSmartPointer<vtkOrientationMarkerWidget>::New();
   widget->SetOutlineColor(0.9300, 0.5700, 0.1300);
   widget->SetOrientationMarker(axes);
   widget->SetInteractor(interactor) ;

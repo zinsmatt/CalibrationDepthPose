@@ -74,14 +74,17 @@ void KeyPressInteractorStyle::OnKeyPress()
   if (key != "space")
     return;
 
-  double *q = rwi->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->GetOrientationWXYZ();
+  double *q = rwi->GetRenderWindow()->GetRenderers()->GetFirstRenderer()
+                 ->GetActiveCamera()->GetOrientationWXYZ();
   Eigen::AngleAxisd rotation(vtkMath::RadiansFromDegrees(q[0]), Eigen::Vector3d(q[1], q[2], q[3]));
   double x = 0.0, y = 0.0, z = 0.0;
-  rwi->GetRenderWindow()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->GetPosition(x, y, z);
+  rwi->GetRenderWindow()->GetRenderers()->GetFirstRenderer()
+      ->GetActiveCamera()->GetPosition(x, y, z);
 
   Eigen::Vector3d cam_position(x, y, z);
   // Additional rotation because the vtk cameras seems to look in -z
-  Eigen::Quaterniond cam_rotation = Eigen::Quaterniond(0, 1, 0, 0) * Eigen::Quaterniond(rotation.toRotationMatrix());
+  Eigen::Quaterniond cam_rotation = Eigen::Quaterniond(0, 1, 0, 0)
+      * Eigen::Quaterniond(rotation.toRotationMatrix());
   Eigen::Quaterniond cam_orientation = cam_rotation.inverse();
   if (depthmap_renderer)
   {
