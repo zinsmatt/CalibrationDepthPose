@@ -7,6 +7,12 @@ This library enables you to find the relative calibration of these two sensors.
 
 ![Calibration Animation 2](doc/calibration_anim_2.gif "Calibration iterations 2")
 
+![Calibration Animation Noisy 2](doc/calibration_anim_noisy_2.gif "Calibration iterations noisy 2")
+
+![Calibration Animation Noisy](doc/calibration_anim_noisy.gif "Calibration iterations noisy")
+
+
+
 
 ## Synthetic Data Generator
 

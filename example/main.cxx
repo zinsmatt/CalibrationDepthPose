@@ -19,6 +19,7 @@
 #include <filesystem>
 #include <iostream>
 #include <memory>
+#include <random>
 #include <sstream>
 #include <stdlib.h>
 #include <time.h>
@@ -35,6 +36,23 @@ using namespace CalibrationDepthPose;
 using ColoredPoint = pcl::PointXYZRGB;
 using ColoredPointcloud = pcl::PointCloud<ColoredPoint>;
 
+
+/// Add Gaussian noise to point cloud
+void addNoise(Pointcloud::Ptr pc, double stddev)
+{
+  std::default_random_engine generator;
+  std::normal_distribution<double> distrib(0.0, stddev);
+
+  for (size_t i = 0; i < pc->size(); ++i)
+  {
+    double noise = distrib(generator);
+    pc->points[i].x *= (1.0 + noise);
+    pc->points[i].y *= (1.0 + noise);
+    pc->points[i].z *= (1.0 + noise);
+  }
+}
+
+
 std::istream& operator >>(std::istream &is, Eigen::Isometry3d& pose)
 {
   double qw, qx, qy, qz, x, y, z;
@@ -43,6 +61,8 @@ std::istream& operator >>(std::istream &is, Eigen::Isometry3d& pose)
   return is;
 }
 
+
+/// Colorize the point cloud with rgb
 ColoredPointcloud::Ptr colorizePointCloud(Pointcloud::Ptr pc,
                                           unsigned char r,
                                           unsigned char b,
@@ -69,9 +89,9 @@ int main(int argc, char* argv[])
   srand (time(NULL));
   pcl::console::setVerbosityLevel(pcl::console::L_ALWAYS);
 
-  if (argc < 2)
+  if (argc < 3)
   {
-    std::cerr << "Usage:\n\tCalibDepthPoseExample dataset_file\n" << std::endl;
+    std::cerr << "Usage:\n\tCalibDepthPoseExample dataset_file noise_stddev\n" << std::endl;
     return -1;
   }
 
@@ -93,6 +113,15 @@ int main(int argc, char* argv[])
 
   std::vector<CalibrationDepthPose::Pointcloud::Ptr> pointclouds;
   std::vector<Eigen::Isometry3d> poses;
+  // set the noise level
+  double noise_stddev = 0.0;
+  try {
+    noise_stddev = std::stod(argv[2]);
+  } catch(std::exception& e) {
+    std::cerr << e.what() << std::endl;
+    std::cerr << "Default noise 0.0" << std::endl;
+  }
+
   for (auto const& s : pc_files)
   {
     CalibrationDepthPose::Pointcloud::Ptr pc(new CalibrationDepthPose::Pointcloud());
@@ -100,6 +129,7 @@ int main(int argc, char* argv[])
     {
       throw std::runtime_error("Could not load point cloud: " + s);
     }
+    addNoise(pc, noise_stddev);
     pointclouds.emplace_back(pc);
   }
 
