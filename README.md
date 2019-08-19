@@ -14,11 +14,15 @@ This library enables you to find the relative calibration of these two sensors.
 
 # Synthetic Data Generator
 
+![Synthetic Data Generator](doc/synthetic_data_generator.png "Synthetic Data Generator")
+
+The synthetic data generator is an interactive tool to simulate depth map acquisition by a camera. It can load a mesh in OBJ and PLY formats. The camera is assumed to be pinhole and without noise. This tool directly generates a dataset which can be used by the other tools.
+
 ```bash
 ./SyntheticDataGenerator mesh_file output_dir
 ```
 
-The synthetic data generator is an interactive tool to simulate depth map acquisition by a camera. It can load a mesh in OBJ and PLY formats. The camera is assumed to be pinhole and without noise. This tool directly generates a dataset which can be used by the other tools.
+
 
 
 ## Dataset

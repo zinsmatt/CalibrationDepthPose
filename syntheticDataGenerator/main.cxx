@@ -109,6 +109,7 @@ int main(int argc, char* argv[])
   renderer->SetActiveCamera(camera);
   renWin->AddRenderer(renderer);
   interactor->SetRenderWindow(renWin);
+  renWin->SetWindowName("Synthetic Depth Map Generator");
   renWin->Render();
 
   unsigned int width = renderer->GetSize()[0];
