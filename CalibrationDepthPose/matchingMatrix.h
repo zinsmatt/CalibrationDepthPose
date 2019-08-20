@@ -35,6 +35,10 @@ public:
     return matrix(i, j);
   }
 
+  unsigned int getSize() const {
+    return matrix.cols();
+  }
+
 private:
   BooleanMatrix matrix;
 };

@@ -1,9 +1,12 @@
 calibration_parameters:
   nb_iterations: 20
   calibration_initial_guess:
-    rotation: [0.0, 0.0, 0.0]
-    translation: [0.0, 0.0, 0.0]
+    rotation: [15.0, -5.0, -17.0]
+    translation: [0.2, 0.06, -0.3]
   distance_type: POINT_TO_PLANE
   matching_max_distance: 0.1
   matching_plane_discriminator_threshold: 0.8
   matching_required_nb_neighbours: 10
+pairs_matching_strategy:
+  strategy: ALL
+  nb_neighbours: 1

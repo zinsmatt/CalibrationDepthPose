@@ -36,6 +36,47 @@ namespace fs = std::filesystem;
 using namespace CalibrationDepthPose;
 
 
+enum class PairsMatchingStrategy
+{
+  ALL,
+  N_CONSECUTIVES_WITH_LOOP,
+  N_CONSECUTIVES_NO_LOOP,
+};
+
+
+/// This function generate the pair matching matrix based on the chosen strategy
+void fillMatchingMatrix(MatchingMatrix& matrix, PairsMatchingStrategy strategy, int nb_neighbours)
+{
+  if (strategy == PairsMatchingStrategy::ALL)
+  {
+    matrix.setMatrix(BooleanMatrix::Ones(matrix.getSize(), matrix.getSize()));
+  }
+  else if (strategy == PairsMatchingStrategy::N_CONSECUTIVES_WITH_LOOP)
+  {
+    for (size_t i = 0; i < matrix.getSize(); ++i)
+    {
+      for (int j = 1; j <= nb_neighbours; ++j)
+      {
+        matrix.addMatch(i, (i + j) % matrix.getSize(), true);
+      }
+    }
+  }
+  else if (strategy == PairsMatchingStrategy::N_CONSECUTIVES_NO_LOOP)
+  {
+    for (size_t i = 0; i < matrix.getSize(); ++i)
+    {
+      for (int j = 1; j <= nb_neighbours; ++j)
+      {
+        if (i + j < matrix.getSize())
+        {
+          matrix.addMatch(i, i + j, true);
+        }
+      }
+    }
+  }
+}
+
+
 int main(int argc, char* argv[])
 {
   pcl::console::setVerbosityLevel(pcl::console::L_ALWAYS);
@@ -66,7 +107,25 @@ int main(int argc, char* argv[])
   else
     params.distanceType = DistanceType::POINT_TO_PLANE;
 
-
+  // Pairs Matching Strategy
+  PairsMatchingStrategy matchingStrategy = PairsMatchingStrategy::N_CONSECUTIVES_WITH_LOOP;
+  int matchingStrategy_n  = 1;
+  auto matchingStrategyNode = config["pairs_matching_strategy"];
+  std::cout << "Pairs Matching Strategy:" << std::endl;
+  if (matchingStrategyNode["strategy"].as<std::string>() == "ALL") {
+    matchingStrategy = PairsMatchingStrategy::ALL;
+    std::cout << "all vs all" << std::endl;
+  } else if (matchingStrategyNode["strategy"].as<std::string>() == "N_CONSECUTIVES_WITH_LOOP") {
+    matchingStrategy = PairsMatchingStrategy::N_CONSECUTIVES_WITH_LOOP;
+    matchingStrategy_n = std::max(1, matchingStrategyNode["nb_neighbours"].as<int>());
+    std::cout << "match " << matchingStrategy_n << " consecutives with loop" << std::endl;
+  } else if (matchingStrategyNode["strategy"].as<std::string>() == "N_CONSECUTIVES_NO_LOOP") {
+    matchingStrategy = PairsMatchingStrategy::N_CONSECUTIVES_NO_LOOP;
+    matchingStrategy_n = std::max(1, matchingStrategyNode["nb_neighbours"].as<int>());
+    std::cout << "match " << matchingStrategy_n << " consecutives no loop" << std::endl;
+  } else {
+    std::cerr << "Invalid pairs matching strategy. Use the default one." << std::endl;
+  }
 
   // Load dataset
   std::string filename(argv[1]);
@@ -127,11 +186,8 @@ int main(int argc, char* argv[])
   std::cout << "\nStart calibration" << std::endl;
   // Estimation of the calib
   CalibDepthPose calibration(pointclouds, poses, estimatedCalib);
-  // Set the pairs of pointclouds used for matching
-  for (size_t i = 0; i < pointclouds.size(); ++i)
-  {
-    calibration.getMatchingMatrix().addMatch(i, (i + 1) % pointclouds.size(), true);
-  }
+  // Fill the pairs matching strategy
+  fillMatchingMatrix(calibration.getMatchingMatrix(), matchingStrategy, matchingStrategy_n);
 
   // Calibration loop
   for (int iter = 0; iter < nb_iterations; ++iter)
