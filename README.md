@@ -11,6 +11,20 @@ Suppose you have a depth camera rigidly attached to another sensor which gives a
 
 
 
+## Dependencies
+CalibrationDepthPose:
+  - [Eigen3](https://github.com/eigenteam/eigen-git-mirror) (tested with 3.3.5)
+  - [PCL](https://github.com/PointCloudLibrary/pcl) (tested with 1.9.1)
+  - [Ceres-solver](https://github.com/ceres-solver/ceres-solver) (tested with 1.14.0)
+
+Examples:
+  - [PCL](https://github.com/PointCloudLibrary/pcl)
+  - [yaml-cpp](https://github.com/jbeder/yaml-cpp)
+
+Synthetic Data Generator:
+  - [PCL](https://github.com/PointCloudLibrary/pcl)
+  - [VTK](https://gitlab.kitware.com/vtk/vtk) (tested with 8.0.0)
+  - [KWIVER](https://github.com/Kitware/kwiver) (Fletch is not required because only the core arrow is needed, very easy to build)
 
 ## Examples
 
