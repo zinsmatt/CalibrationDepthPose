@@ -82,3 +82,6 @@ A dataset contains the following files:
   - *dataset.txt*: this is the main file which contains the path of the poses file and all the pointlcoud files
   - *dataset.poses*: this file contains the list of the camera poses (one line per capture) (qw qx qy qz x y z)
   - *pc_.ply*: point cloud files
+
+### Data
+The *data* folder contains an example of dataset, with 7 point clouds and the associated poses. It also contains the initial mesh *box.obj* that was used to generate the synthetic data.

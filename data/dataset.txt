@@ -1,0 +1,8 @@
+/home/matthieu/dev/CalibrationDepthPose/build/../data/dataset.poses
+/home/matthieu/dev/CalibrationDepthPose/build/../data/pc_0000.ply
+/home/matthieu/dev/CalibrationDepthPose/build/../data/pc_0001.ply
+/home/matthieu/dev/CalibrationDepthPose/build/../data/pc_0002.ply
+/home/matthieu/dev/CalibrationDepthPose/build/../data/pc_0003.ply
+/home/matthieu/dev/CalibrationDepthPose/build/../data/pc_0004.ply
+/home/matthieu/dev/CalibrationDepthPose/build/../data/pc_0005.ply
+/home/matthieu/dev/CalibrationDepthPose/build/../data/pc_0006.ply
