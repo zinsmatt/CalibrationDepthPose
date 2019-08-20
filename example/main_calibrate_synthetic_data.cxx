@@ -177,5 +177,10 @@ int main(int argc, char* argv[])
   std::cout << "\nReal calibration: " << realCalib << "\n";
   std::cout << "Estimated calibration: " << estimatedCalib << std::endl;
 
+  std::cout << "\nWith Euler angles:\n";
+  std::cout << "Real calibration: " << printEulerAngleIsometry(realCalib) << "\n";
+  std::cout << "Estimated calibration: " << printEulerAngleIsometry(estimatedCalib) << std::endl;
+
+
   return 0;
 }
