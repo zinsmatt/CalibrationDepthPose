@@ -7,6 +7,20 @@
 namespace CalibrationDepthPose
 {
 
+struct PairsMatchingStrategy
+{
+  enum class Strategy
+  {
+    ALL,
+    N_CONSECUTIVES_WITH_LOOP,
+    N_CONSECUTIVES_NO_LOOP,
+  } strategy = Strategy::N_CONSECUTIVES_WITH_LOOP;
+
+  int nbNeighbours = 1;
+};
+
+std::ostream& operator <<(std::ostream& os, PairsMatchingStrategy const& strategy);
+
 using BooleanMatrix = Eigen::Matrix<bool, Eigen::Dynamic, Eigen::Dynamic>;
 
 class MatchingMatrix
@@ -40,6 +54,8 @@ public:
   }
 
   friend std::ostream& operator <<(std::ostream& os, MatchingMatrix const& matrix);
+
+  void setFromPredefinedMatchingStrategy(PairsMatchingStrategy const& strategy);
 
 private:
   BooleanMatrix matrix;
