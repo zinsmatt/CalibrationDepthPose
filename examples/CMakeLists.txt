@@ -61,3 +61,14 @@ target_link_libraries(${targetName2} PRIVATE
     ${YAML_CPP_LIBRARIES}
     stdc++fs
     )
+
+
+set(targetName3 "multithreading")
+
+add_executable(${targetName3}
+    main_multithreading.cxx
+    )
+
+target_link_libraries(${targetName3} PRIVATE
+    CalibrationDepthPose
+    )

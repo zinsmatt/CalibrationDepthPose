@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
 
   // Load pointclouds
   std::vector<CalibrationDepthPose::Pointcloud::Ptr> pointclouds;
-  std::vector<Eigen::Isometry3d> poses;
+  std::vector<Eigen::Isometry3d, Eigen::aligned_allocator<Eigen::Isometry3d>> poses;
   for (auto const& s : pc_files)
   {
     CalibrationDepthPose::Pointcloud::Ptr pc(new CalibrationDepthPose::Pointcloud());

@@ -58,7 +58,8 @@ class CalibDepthPose
 {
 public:
   CalibDepthPose(std::vector<Pointcloud::Ptr> const& pointclouds,
-                 std::vector<Eigen::Isometry3d> const& poses,
+                 const std::vector<Eigen::Isometry3d,
+                 Eigen::aligned_allocator<Eigen::Isometry3d> > &poses,
                  Eigen::Isometry3d const& initial_calib);
 
    Eigen::Isometry3d calibrate(int nbIterations, CalibParameters *params);
@@ -75,7 +76,7 @@ public:
 
 private:
   std::vector<Pointcloud::Ptr> m_pointclouds;     // list of pointclouds
-  std::vector<Eigen::Isometry3d> m_poses;         // list of poses
+  std::vector<Eigen::Isometry3d, Eigen::aligned_allocator<Eigen::Isometry3d>> m_poses;         // list of poses
   MatchingMatrix m_matchMatrix;
   CalibrationRaw m_calib;     // current estimate of the calibration
                               // (it is the pose of the camera in the other sensor frame)
