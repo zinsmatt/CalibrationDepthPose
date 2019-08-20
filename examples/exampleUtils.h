@@ -21,7 +21,7 @@
 #include <pcl/point_cloud.h>
 #include <yaml-cpp/yaml.h>
 
-#include "pclUtils.h"
+#include <CalibrationDepthPose/pclUtils.h>
 
 #define TO_RADIANS(x) x * 0.01745329251
 #define TO_DEGREES(x) x * 57.2957795131

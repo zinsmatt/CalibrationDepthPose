@@ -56,7 +56,7 @@ add_library(${PROJECT_NAME} ${${PROJECT_NAME}_headers} ${${PROJECT_NAME}_sources
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
     ${PCL_INCLUDE_DIRS}
     ${CERES_INCLUDE_DIRS}
-    ${SOURCES_DIR}
+    ${SOURCES_DIR}/..
     )
 
 target_link_libraries(${PROJECT_NAME} PUBLIC

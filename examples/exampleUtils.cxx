@@ -15,11 +15,11 @@
 // limitations under the License.
 //=========================================================================
 
+#include "exampleUtils.h"
+
 #include <random>
 
 #include <unsupported/Eigen/EulerAngles>
-
-#include "exampleUtils.h"
 
 
 std::ostream &operator <<(std::ostream &os, const Eigen::Isometry3d &pose)

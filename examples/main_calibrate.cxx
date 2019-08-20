@@ -28,8 +28,9 @@
 #include <pcl/io/ply_io.h>
 #include <yaml-cpp/yaml.h>
 
-#include "calibDepthPose.h"
-#include "calibParameters.h"
+#include <CalibrationDepthPose/calibParameters.h>
+#include <CalibrationDepthPose/calibDepthPose.h>
+
 #include "exampleUtils.h"
 
 namespace fs = std::filesystem;
