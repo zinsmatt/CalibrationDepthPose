@@ -12,7 +12,7 @@ Suppose you have a depth camera rigidly attached to another sensor which gives a
 
 
 ## Dependencies
-CalibrationDepthPose:
+Calibration Depth Pose:
   - [Eigen3](https://github.com/eigenteam/eigen-git-mirror) (tested with 3.3.5)
   - [PCL](https://github.com/PointCloudLibrary/pcl) (tested with 1.9.1)
   - [Ceres-solver](https://github.com/ceres-solver/ceres-solver) (tested with 1.14.0)

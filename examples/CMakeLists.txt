@@ -23,7 +23,6 @@ find_package(yaml-cpp REQUIRED)
 set(targetName1 "calibrate_synthetic_data")
 
 
-
 add_executable(${targetName1}
     main_calibrate_synthetic_data.cxx
     exampleUtils.cxx

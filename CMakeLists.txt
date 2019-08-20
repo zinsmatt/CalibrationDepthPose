@@ -19,7 +19,7 @@ cmake_minimum_required(VERSION 3.0)
 project(CalibrationDepthPose)
 
 option(BUILD_SYNTHETIC_DATA_GENERATOR "Build the synthetic data generator project" ON)
-option(BUILD_EXAMPLE "Build the synthetic example project" ON)
+option(BUILD_EXAMPLES "Build the examples of calibration" ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
@@ -69,8 +69,8 @@ if (BUILD_SYNTHETIC_DATA_GENERATOR)
     add_subdirectory(syntheticDataGenerator)
 endif (BUILD_SYNTHETIC_DATA_GENERATOR)
 
-if (BUILD_EXAMPLE)
-    add_subdirectory(example)
-endif (BUILD_EXAMPLE)
+if (BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif (BUILD_EXAMPLES)
 
 
