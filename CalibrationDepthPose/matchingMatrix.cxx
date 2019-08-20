@@ -9,4 +9,9 @@ MatchingMatrix::MatchingMatrix(int n)
 
 }
 
+std::ostream &operator <<(std::ostream &os, const MatchingMatrix &matrix)
+{
+  return os << matrix.matrix;
+}
+
 }

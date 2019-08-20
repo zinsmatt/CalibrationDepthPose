@@ -8,5 +8,5 @@ calibration_parameters:
   matching_plane_discriminator_threshold: 0.8
   matching_required_nb_neighbours: 10
 pairs_matching_strategy:
-  strategy: ALL
+  strategy: N_CONSECUTIVES_WITH_LOOP
   nb_neighbours: 1

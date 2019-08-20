@@ -39,9 +39,13 @@ public:
     return matrix.cols();
   }
 
+  friend std::ostream& operator <<(std::ostream& os, MatchingMatrix const& matrix);
+
 private:
   BooleanMatrix matrix;
 };
+
+std::ostream& operator <<(std::ostream& os, MatchingMatrix const& matrix);
 
 }
 

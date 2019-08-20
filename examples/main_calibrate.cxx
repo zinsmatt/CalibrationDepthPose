@@ -183,12 +183,13 @@ int main(int argc, char* argv[])
   }
 
 
-  std::cout << "\nStart calibration" << std::endl;
   // Estimation of the calib
   CalibDepthPose calibration(pointclouds, poses, estimatedCalib);
   // Fill the pairs matching strategy
   fillMatchingMatrix(calibration.getMatchingMatrix(), matchingStrategy, matchingStrategy_n);
+  std::cout << "Matching Matrix\n" << calibration.getMatchingMatrix() << std::endl;
 
+  std::cout << "\nStart calibration" << std::endl;
   // Calibration loop
   for (int iter = 0; iter < nb_iterations; ++iter)
   {
