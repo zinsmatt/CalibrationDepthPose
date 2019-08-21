@@ -32,12 +32,14 @@ matchPointClouds(Pointcloud::Ptr pc1, Pointcloud::Ptr pc2,
 {
   Pointcloud::Ptr pc1_world(new Pointcloud);
   Pointcloud::Ptr pc2_world(new Pointcloud);
+  // Transform both point clouds to world
   pcl::transformPointCloud(*pc1, *pc1_world, pose1.matrix().cast<float>());
   pcl::transformPointCloud(*pc2, *pc2_world, pose2.matrix().cast<float>());
 
   KDTree::Ptr kdtree2_world(new KDTree);
   kdtree2_world->setInputCloud(pc2_world);
 
+  // Match the world point clouds
   double matchingMaxSquareDist = params->matchingMaxDistance * params->matchingMaxDistance;
   std::vector<Eigen::Vector3d> pts1, pts2, normals;
   if (params->distanceType == DistanceType::POINT_TO_POINT)

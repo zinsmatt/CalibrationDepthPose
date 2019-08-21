@@ -30,6 +30,7 @@ enum class DistanceType
   POINT_TO_PLANE
 };
 
+/// This struct is just a wrapper for all the different parameters that can be tuned for matching
 struct CalibParameters
 {
 public:

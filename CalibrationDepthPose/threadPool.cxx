@@ -28,40 +28,40 @@ ThreadPool::ThreadPool(size_t nbThreads) : stop(false)
   {
     nbThreads = std::thread::hardware_concurrency();
   }
+
+  auto workerInternalFunction = [this]() {
+    while(true)
+    {
+      std::function<void()> task;
+      {
+        std::unique_lock<std::mutex> lock(this->queue_mutex);
+        this->condition.wait(lock, [this] {
+          // the thread stops waiting if stop or if tasks is not empty
+          return this->stop || !this->tasks.empty();
+        });
+        // if stop or no more tasks return
+        if (this->stop || this->tasks.empty())
+          return ;
+        // get next task
+        task = std::move(this->tasks.front());
+        this->tasks.pop();
+      } // implicit lock.unlock();
+
+      // run next task
+      task();
+    }
+  };
+
   for (size_t i = 0; i < nbThreads; ++i)
   {
-    workers.emplace_back([this]() {
-      while(true)
-      {
-        std::function<void()> task;
-        {
-          std::unique_lock<std::mutex> lock(this->queue_mutex);
-          this->condition.wait(lock, [this] {
-            // the thread stops waiting if stop or if tasks is not empty
-            return this->stop || !this->tasks.empty();
-          });
-          // if stop or no more tasks return
-          if (this->stop || this->tasks.empty())
-            return ;
-          // get next task
-          task = std::move(this->tasks.front());
-          this->tasks.pop();
-        } // implicit lock.unlock();
-
-        // run next task
-        task();
-      }
-    });
+    // fill workers with threads executing the same function
+    workers.emplace_back(workerInternalFunction);
   }
 }
 
 ThreadPool::~ThreadPool()
 {
-  {
-    std::unique_lock<std::mutex> lock(queue_mutex);
-    stop = true;
-  } // implicit lock.unlock()
-
+  stop = true;
   condition.notify_all();
 
   for (auto& worker : workers)

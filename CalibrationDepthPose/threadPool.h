@@ -32,6 +32,8 @@ class ThreadPool
 {
 public:
   ThreadPool(size_t nbThreads);
+
+  /// Enqueue a new task
   template<class F, class... Args>
   auto enqueue(F&& f, Args&&... args)
     -> std::future<typename std::result_of<F(Args...)>::type>;
@@ -46,7 +48,7 @@ private:
 
   std::mutex queue_mutex;
   std::condition_variable condition;
-  bool stop;
+  std::atomic<bool> stop;
 };
 
 
@@ -57,16 +59,19 @@ auto ThreadPool::enqueue(F&& f, Args&&... args)
 {
   using return_type = typename std::result_of<F(Args...)>::type;
 
+  // Create a new task
   auto task = std::make_shared< std::packaged_task<return_type()> >(
         std::bind(std::forward<F>(f), std::forward<Args>(args)...)
-        );
+  );
   std::future<return_type> res = task->get_future();
   {
+    // lock other threads
     std::unique_lock<std::mutex> lock(queue_mutex);
 
     if (stop)
       throw std::runtime_error("Enqueue on stoppped Thread Pool");
 
+    // enqueue the task in the list of tasks
     tasks.emplace([task](){ (*task)(); });
   }
 

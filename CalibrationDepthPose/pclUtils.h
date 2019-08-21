@@ -39,12 +39,14 @@ using KDTree = pcl::KdTreeFLANN<Point>;
  */
 void voxelGridFilter(Pointcloud::Ptr& pc, double voxelSize);
 
+
 /**
  * @brief transform in place a pointcloud with an rigi transform
  * @param pc [in] pointcloud
  * @param H [in] rigid transform
  */
 void transformInPlace(Pointcloud::Ptr& pc, Eigen::Isometry3d const& H);
+
 
 /**
  * @brief transform a pointcloud with an rigi transform
