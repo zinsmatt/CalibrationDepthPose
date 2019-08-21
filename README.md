@@ -38,9 +38,9 @@ This example can directly be used to process your own data. It just requires a [
 ```
 
 
-The configuration file contains the parameters to use for calibration. The rotation part of the initial calibration guess is expressed in Euler angles Rx Ry Rz in degrees (the rotation are compose in the same order).
+The calibration parameters file contains the parameters to use for calibration. The rotation part of the initial calibration guess is expressed in Euler angles Rx Ry Rz in degrees (the rotation are compose in the same order).
 
-For example:
+Example of calibration parameters file:
 ~~~yaml
 calibration_parameters:
   nb_iterations: 20
@@ -63,12 +63,12 @@ This example shows how to use the library and synthetic data. Like the previous 
 
 
 ```bash
-./calibrate_synthetic_data dataset_file nb_iterations noise_stddev calibrations_files
+./calibrate_synthetic_data dataset_file nb_iterations noise_stddev calibrations_file
 
 ```
 
 
-The configuration file just defines the real calibration that we are looking for and the initial guess that we have.
+The calibrations file just defines the real calibration that we are looking for and the initial guess that we have.
 The poses of the input dataset are transformed by the program so that they include the real calibration. This calibration is then tried to be estimated using the library algorithms. In each calibration, the rotation part is expressed in Euler angles Rx, Ry, Rz in degrees (the rotation are made in the same order).
 
 ~~~yaml

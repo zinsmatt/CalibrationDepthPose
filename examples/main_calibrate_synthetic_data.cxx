@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
   if (argc < 5)
   {
     std::cerr << "Usage:\n\t calibrate_synthetic_data dataset_file nb_iterations "
-                 "noise_stddev calibrations_files\n" << std::endl;
+                 "noise_stddev calibrations_file\n" << std::endl;
     return -1;
   }
 
