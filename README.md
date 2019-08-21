@@ -33,7 +33,7 @@ Synthetic Data Generator:
 This example can directly be used to process your own data. It just requires a [dataset](#dataset) and a configuration file. It also saves the concatenation of all point clouds transformed to world coordinates using the estimated calibration at each iteration.
 
 ```bash
-./calibrate dataset_file configuration_file
+./calibrate dataset_file calibration_parameters_file
 
 ```
 
@@ -51,6 +51,10 @@ calibration_parameters:
   matching_max_distance: 0.1
   matching_plane_discriminator_threshold: 0.8
   matching_required_nb_neighbours: 10
+  nb_threads: 8
+pairs_matching_strategy:
+  strategy: N_CONSECUTIVES_WITH_LOOP
+  nb_neighbours: 1
 ~~~
 
 ### calibrate_synthetic_data
@@ -59,7 +63,7 @@ This example shows how to use the library and synthetic data. Like the previous 
 
 
 ```bash
-./calibrate_synthetic_data dataset_file nb_iterations noise_stddev configuration_file
+./calibrate_synthetic_data dataset_file nb_iterations noise_stddev calibrations_files
 
 ```
 

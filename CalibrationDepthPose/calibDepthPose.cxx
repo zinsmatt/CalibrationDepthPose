@@ -20,8 +20,9 @@
 #include <fstream>
 
 #include <CalibrationDepthPose/calibCostFunctions.h>
+#include <CalibrationDepthPose/calibParameters.h>
 #include <CalibrationDepthPose/matchingTools.h>
-
+#include <CalibrationDepthPose/threadPool.h>
 
 namespace
 {
@@ -47,8 +48,7 @@ namespace CalibrationDepthPose
 CalibDepthPose::CalibDepthPose(const std::vector<Pointcloud::Ptr> &pointclouds,
                                const Isometry3d_vector &poses,
                                const Eigen::Isometry3d &initial_calib)
-  : m_pointclouds(pointclouds), m_poses(poses), m_matchMatrix(MatchingMatrix(pointclouds.size())),
-    m_pool(ThreadPool(std::thread::hardware_concurrency() * 2 + 1))
+  : m_pointclouds(pointclouds), m_poses(poses), m_matchMatrix(MatchingMatrix(pointclouds.size()))
 {
   m_calib.fromIsometry3d(initial_calib);
 }
@@ -64,6 +64,8 @@ Eigen::Isometry3d CalibDepthPose::calibrate(int nbIterations, CalibParameters *p
 
 void CalibDepthPose::calibIteration(CalibParameters *params)
 {
+  ThreadPool pool(params->nbThreads);   // thread pool used for parallel matching
+
   // Get the list of point clouds pairs to match
   auto matchedPairs = m_matchMatrix.getPairs();
   std::cout << matchedPairs.size() << " pairs of matched point clouds" << std::endl;
@@ -97,7 +99,7 @@ void CalibDepthPose::calibIteration(CalibParameters *params)
       return nbMatches;
     };
 
-    nbMatchedPoints.emplace_back(m_pool.enqueue(matching_fct));
+    nbMatchedPoints.emplace_back(pool.enqueue(matching_fct));
   }
 
   for (auto&& n : nbMatchedPoints)

@@ -24,6 +24,10 @@ namespace CalibrationDepthPose
 
 ThreadPool::ThreadPool(size_t nbThreads) : stop(false)
 {
+  if (nbThreads == 0)
+  {
+    nbThreads = std::thread::hardware_concurrency();
+  }
   for (size_t i = 0; i < nbThreads; ++i)
   {
     workers.emplace_back([this]() {

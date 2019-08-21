@@ -19,6 +19,7 @@
 #define CALIBPARAMETERS_H
 
 #include <string>
+#include <thread>
 
 namespace CalibrationDepthPose
 {
@@ -34,14 +35,12 @@ struct CalibParameters
 public:
   CalibParameters();
 
-  void loadFromFile(std::string const& filename);
-
 public:
   DistanceType distanceType;
   double matchingMaxDistance;
   double matchingRequiredNbNeighbours;
   double matchingPlaneDiscriminatorThreshold;
-
+  unsigned int nbThreads = std::thread::hardware_concurrency();
 };
 
 }

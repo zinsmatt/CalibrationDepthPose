@@ -16,13 +16,13 @@
 //=========================================================================
 
 #include <cmath>
+#include <ctime>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <stdlib.h>
-#include <time.h>
 
 #include <pcl/point_cloud.h>
 #include <pcl/io/ply_io.h>
@@ -40,11 +40,12 @@ using namespace CalibrationDepthPose;
 
 int main(int argc, char* argv[])
 {
+  srand (time(NULL));
   pcl::console::setVerbosityLevel(pcl::console::L_ALWAYS);
 
   if (argc < 3)
   {
-    std::cerr << "Usage:\n\t calibrate dataset_file configuration_file\n" << std::endl;
+    std::cerr << "Usage:\n\t calibrate dataset_file calibration_parameters_file\n" << std::endl;
     return -1;
   }
 
@@ -65,6 +66,8 @@ int main(int argc, char* argv[])
       = parameters["matching_plane_discriminator_threshold"].as<double>();
   params.matchingRequiredNbNeighbours
       = parameters["matching_required_nb_neighbours"].as<int>();
+  params.nbThreads
+      = parameters["nb_threads"].as<int>();
   if (parameters["distance_type"].as<std::string>() == "POINT_TO_POINT")
     params.distanceType = DistanceType::POINT_TO_POINT;
   else

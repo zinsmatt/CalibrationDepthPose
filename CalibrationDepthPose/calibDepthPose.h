@@ -23,7 +23,6 @@
 #include <CalibrationDepthPose/eigenUtils.h>
 #include <CalibrationDepthPose/matchingMatrix.h>
 #include <CalibrationDepthPose/pclUtils.h>
-#include <CalibrationDepthPose/threadPool.h>
 
 
 namespace CalibrationDepthPose
@@ -81,7 +80,6 @@ private:
   MatchingMatrix m_matchMatrix;
   CalibrationRaw m_calib;     // current estimate of the calibration
                               // (it is the pose of the camera in the other sensor frame)
-  ThreadPool m_pool;
 };
 
 }
