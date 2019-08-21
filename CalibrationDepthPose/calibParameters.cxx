@@ -15,7 +15,7 @@
 // limitations under the License.
 //=========================================================================
 
-#include "calibParameters.h"
+#include <CalibrationDepthPose/calibParameters.h>
 
 namespace CalibrationDepthPose
 {

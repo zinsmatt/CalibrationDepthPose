@@ -50,10 +50,6 @@ ColoredPointcloud::Ptr colorizePointCloud(CalibrationDepthPose::Pointcloud::Ptr 
 Eigen::Isometry3d extractIsometry(YAML::Node const& node);
 
 
-/// Load configuration from YAML file
-std::pair<Eigen::Isometry3d, Eigen::Isometry3d> loadConfiguration(std::string const& filename);
-
-
 /// Return a string representation of the isometry using Euler angle (Rx Ry Rz) for the orietation
 std::string printEulerAngleIsometry(Eigen::Isometry3d const& pose);
 

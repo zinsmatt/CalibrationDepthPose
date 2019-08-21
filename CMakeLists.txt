@@ -36,9 +36,11 @@ set(${PROJECT_NAME}_headers
     ${SOURCES_DIR}/calibCostFunctions.h
     ${SOURCES_DIR}/calibDepthPose.h
     ${SOURCES_DIR}/calibParameters.h
+    ${SOURCES_DIR}/eigenUtils.h
     ${SOURCES_DIR}/matchingMatrix.h
     ${SOURCES_DIR}/matchingTools.h
     ${SOURCES_DIR}/pclUtils.h
+    ${SOURCES_DIR}/threadPool.h
     )
 
 # Sources
@@ -48,6 +50,7 @@ set(${PROJECT_NAME}_sources
     ${SOURCES_DIR}/matchingMatrix.cxx
     ${SOURCES_DIR}/matchingTools.cxx
     ${SOURCES_DIR}/pclUtils.cxx
+    ${SOURCES_DIR}/threadPool.cxx
     )
 
 add_library(${PROJECT_NAME} ${${PROJECT_NAME}_headers} ${${PROJECT_NAME}_sources})

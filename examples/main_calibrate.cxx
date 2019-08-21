@@ -16,13 +16,13 @@
 //=========================================================================
 
 #include <cmath>
+#include <ctime>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <stdlib.h>
-#include <time.h>
 
 #include <pcl/point_cloud.h>
 #include <pcl/io/ply_io.h>
@@ -30,6 +30,7 @@
 
 #include <CalibrationDepthPose/calibParameters.h>
 #include <CalibrationDepthPose/calibDepthPose.h>
+#include <CalibrationDepthPose/eigenUtils.h>
 
 #include "exampleUtils.h"
 
@@ -39,13 +40,16 @@ using namespace CalibrationDepthPose;
 
 int main(int argc, char* argv[])
 {
+  srand (time(NULL));
   pcl::console::setVerbosityLevel(pcl::console::L_ALWAYS);
 
   if (argc < 3)
   {
-    std::cerr << "Usage:\n\t calibrate dataset_file configuration_file\n" << std::endl;
+    std::cerr << "Usage:\n\t calibrate dataset_file calibration_parameters_file\n" << std::endl;
     return -1;
   }
+
+  std::chrono::system_clock::time_point start_t = std::chrono::system_clock::now();
 
 
   // Load calibration parameters
@@ -62,6 +66,8 @@ int main(int argc, char* argv[])
       = parameters["matching_plane_discriminator_threshold"].as<double>();
   params.matchingRequiredNbNeighbours
       = parameters["matching_required_nb_neighbours"].as<int>();
+  params.nbThreads
+      = parameters["nb_threads"].as<int>();
   if (parameters["distance_type"].as<std::string>() == "POINT_TO_POINT")
     params.distanceType = DistanceType::POINT_TO_POINT;
   else
@@ -107,7 +113,7 @@ int main(int argc, char* argv[])
 
   // Load pointclouds
   std::vector<CalibrationDepthPose::Pointcloud::Ptr> pointclouds;
-  std::vector<Eigen::Isometry3d> poses;
+  CalibrationDepthPose::Isometry3d_vector poses;
   for (auto const& s : pc_files)
   {
     CalibrationDepthPose::Pointcloud::Ptr pc(new CalibrationDepthPose::Pointcloud());
@@ -179,6 +185,11 @@ int main(int argc, char* argv[])
   pcl::io::savePLYFile("colored_" + std::to_string(nb_iterations) + ".ply", *concat);
 
   std::cout << "Estimated calibration: " << estimatedCalib << std::endl;
+
+  std::chrono::system_clock::time_point end_t = std::chrono::system_clock::now();
+  double duration = std::chrono::duration_cast<std::chrono::seconds>(end_t - start_t).count();
+  std::cout << "\nDone in " << duration << " s" << std::endl;
+
 
   return 0;
 }

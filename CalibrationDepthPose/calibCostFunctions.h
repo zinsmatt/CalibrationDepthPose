@@ -97,6 +97,9 @@ private:
   Eigen::Vector3d Y;
   Eigen::Vector3d N;
   Eigen::Isometry3d H_pose2_pose1; // pose2.inv * pose1
+
+public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 

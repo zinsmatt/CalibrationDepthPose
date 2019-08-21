@@ -19,6 +19,7 @@
 #define CALIBPARAMETERS_H
 
 #include <string>
+#include <thread>
 
 namespace CalibrationDepthPose
 {
@@ -29,19 +30,18 @@ enum class DistanceType
   POINT_TO_PLANE
 };
 
+/// This struct is just a wrapper for all the different parameters that can be tuned for matching
 struct CalibParameters
 {
 public:
   CalibParameters();
-
-  void loadFromFile(std::string const& filename);
 
 public:
   DistanceType distanceType;
   double matchingMaxDistance;
   double matchingRequiredNbNeighbours;
   double matchingPlaneDiscriminatorThreshold;
-
+  unsigned int nbThreads = std::thread::hardware_concurrency();
 };
 
 }

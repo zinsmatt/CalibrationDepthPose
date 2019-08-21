@@ -82,17 +82,6 @@ Eigen::Isometry3d extractIsometry(const YAML::Node &node)
   return Eigen::Translation3d(transl[0], transl[1], transl[2]) * r;
 }
 
-std::pair<Eigen::Isometry3d, Eigen::Isometry3d> loadConfiguration(const std::string &filename)
-{
-  YAML::Node config = YAML::LoadFile(filename);
-  auto real_calib_node = config["real_calibration"];
-  auto estim_calib_node = config["estimated_calibration"];
-
-  Eigen::Isometry3d real_calib = extractIsometry(real_calib_node);
-  Eigen::Isometry3d estim_calib = extractIsometry(estim_calib_node);
-
-  return std::make_pair(real_calib, estim_calib);
-}
 
 std::string printEulerAngleIsometry(const Eigen::Isometry3d &pose)
 {

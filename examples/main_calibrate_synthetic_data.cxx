@@ -16,13 +16,14 @@
 //=========================================================================
 
 #include <cmath>
+#include <ctime>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <memory>
 #include <sstream>
 #include <stdlib.h>
-#include <time.h>
+#include <thread>
 
 #include <pcl/point_cloud.h>
 #include <pcl/io/ply_io.h>
@@ -30,6 +31,7 @@
 
 #include <CalibrationDepthPose/calibDepthPose.h>
 #include <CalibrationDepthPose/calibParameters.h>
+#include <CalibrationDepthPose/eigenUtils.h>
 
 #include "exampleUtils.h"
 
@@ -44,7 +46,8 @@ int main(int argc, char* argv[])
 
   if (argc < 5)
   {
-    std::cerr << "Usage:\n\t calibrate_synthetic_data dataset_file nb_iterations noise_stddev configuration_file\n" << std::endl;
+    std::cerr << "Usage:\n\t calibrate_synthetic_data dataset_file nb_iterations "
+                 "noise_stddev calibrations_file\n" << std::endl;
     return -1;
   }
 
@@ -67,7 +70,7 @@ int main(int argc, char* argv[])
 
   // Load pointclouds
   std::vector<CalibrationDepthPose::Pointcloud::Ptr> pointclouds;
-  std::vector<Eigen::Isometry3d> poses;
+  CalibrationDepthPose::Isometry3d_vector poses;
   // set the noise level
   double noise_stddev = 0.0;
   try {
@@ -117,6 +120,7 @@ int main(int argc, char* argv[])
   params.matchingMaxDistance = 0.1;
   params.matchingPlaneDiscriminatorThreshold = 0.8;
   params.matchingRequiredNbNeighbours = 10;
+  params.nbThreads = std::thread::hardware_concurrency() * 2 + 1;
 
   int nbIterations = 20;
   try {
@@ -126,8 +130,11 @@ int main(int argc, char* argv[])
     std::cerr << "Default number of iterations " << nbIterations << std::endl;
   }
 
+  // Load the real calibration and the initial guess
+  YAML::Node config = YAML::LoadFile(argv[4]);
+  Eigen::Isometry3d realCalib = extractIsometry(config["real_calibration"]);
+  Eigen::Isometry3d estimatedCalib = extractIsometry(config["estimated_calibration"]);
 
-  auto [realCalib, estimatedCalib] = loadConfiguration(argv[4]);
   std::cout << "\nReal calibration: " << realCalib << "\n";
   std::cout << "Initial guess of calibration: " << estimatedCalib << std::endl;
 

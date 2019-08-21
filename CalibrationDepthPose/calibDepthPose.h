@@ -20,8 +20,9 @@
 
 #include <Eigen/Dense>
 
-#include "matchingMatrix.h"
-#include "pclUtils.h"
+#include <CalibrationDepthPose/eigenUtils.h>
+#include <CalibrationDepthPose/matchingMatrix.h>
+#include <CalibrationDepthPose/pclUtils.h>
 
 
 namespace CalibrationDepthPose
@@ -57,9 +58,9 @@ std::ostream& operator <<(std::ostream& os, CalibrationRaw const& calib);
 class CalibDepthPose
 {
 public:
-  CalibDepthPose(std::vector<Pointcloud::Ptr> const& pointclouds,
-                 std::vector<Eigen::Isometry3d> const& poses,
-                 Eigen::Isometry3d const& initial_calib);
+  CalibDepthPose(const std::vector<Pointcloud::Ptr> &pointclouds,
+                 const Isometry3d_vector &poses,
+                 const Eigen::Isometry3d &initial_calib);
 
    Eigen::Isometry3d calibrate(int nbIterations, CalibParameters *params);
 
@@ -75,7 +76,7 @@ public:
 
 private:
   std::vector<Pointcloud::Ptr> m_pointclouds;     // list of pointclouds
-  std::vector<Eigen::Isometry3d> m_poses;         // list of poses
+  Isometry3d_vector m_poses;         // list of poses
   MatchingMatrix m_matchMatrix;
   CalibrationRaw m_calib;     // current estimate of the calibration
                               // (it is the pose of the camera in the other sensor frame)
