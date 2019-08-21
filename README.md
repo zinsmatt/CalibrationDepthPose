@@ -1,4 +1,4 @@
-# Calibration Depth Pose
+# Calibration Depth Pose (+ synthetic data generator)
 
 Suppose you have a depth camera rigidly attached to another sensor which gives a pose (position + orientation). This library enables you to find the relative calibration between these two sensors.
 
@@ -30,7 +30,7 @@ Synthetic Data Generator:
 
 ### calibrate
 
-This example can directly be used to process your own data. It just requires a [dataset](#dataset) and a configuration file. It also saves the concatenation of all point clouds transformed to world coordinates using the estimated calibration at each iteration.
+This example can directly be used to process your own data. It just requires a [dataset](#dataset) and a yaml file containing the calibration parameters. As output, is saves the concatenation of all point clouds transformed to world coordinates using the estimated calibration at each iteration.
 
 ```bash
 ./calibrate dataset_file calibration_parameters_file
