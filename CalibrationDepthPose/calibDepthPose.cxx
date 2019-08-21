@@ -15,12 +15,12 @@
 // limitations under the License.
 //=========================================================================
 
-#include "calibDepthPose.h"
+#include <CalibrationDepthPose/calibDepthPose.h>
 
 #include <fstream>
 
-#include "calibCostFunctions.h"
-#include "matchingTools.h"
+#include <CalibrationDepthPose/calibCostFunctions.h>
+#include <CalibrationDepthPose/matchingTools.h>
 
 
 namespace

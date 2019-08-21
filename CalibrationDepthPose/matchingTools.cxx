@@ -20,7 +20,7 @@
 
 #include <pcl/common/transforms.h>
 
-#include "calibParameters.h"
+#include <CalibrationDepthPose/calibParameters.h>
 
 namespace CalibrationDepthPose
 {

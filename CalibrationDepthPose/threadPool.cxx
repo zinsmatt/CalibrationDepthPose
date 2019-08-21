@@ -16,7 +16,7 @@
 //=========================================================================
 
 
-#include "threadPool.h"
+#include <CalibrationDepthPose/threadPool.h>
 
 namespace CalibrationDepthPose
 {

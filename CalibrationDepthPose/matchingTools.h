@@ -21,7 +21,7 @@
 
 #include <Eigen/Dense>
 
-#include "pclUtils.h"
+#include <CalibrationDepthPose/pclUtils.h>
 
 
 namespace CalibrationDepthPose

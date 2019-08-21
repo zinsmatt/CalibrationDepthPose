@@ -20,10 +20,10 @@
 
 #include <Eigen/Dense>
 
-#include "eigenUtils.h"
-#include "matchingMatrix.h"
-#include "pclUtils.h"
-#include "threadPool.h"
+#include <CalibrationDepthPose/eigenUtils.h>
+#include <CalibrationDepthPose/matchingMatrix.h>
+#include <CalibrationDepthPose/pclUtils.h>
+#include <CalibrationDepthPose/threadPool.h>
 
 
 namespace CalibrationDepthPose

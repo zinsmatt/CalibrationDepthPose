@@ -1,4 +1,4 @@
-#include "matchingMatrix.h"
+#include <CalibrationDepthPose/matchingMatrix.h>
 
 namespace CalibrationDepthPose
 {
