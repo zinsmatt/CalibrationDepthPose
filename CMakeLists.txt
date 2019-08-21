@@ -36,6 +36,7 @@ set(${PROJECT_NAME}_headers
     ${SOURCES_DIR}/calibCostFunctions.h
     ${SOURCES_DIR}/calibDepthPose.h
     ${SOURCES_DIR}/calibParameters.h
+    ${SOURCES_DIR}/eigenUtils.h
     ${SOURCES_DIR}/matchingMatrix.h
     ${SOURCES_DIR}/matchingTools.h
     ${SOURCES_DIR}/pclUtils.h

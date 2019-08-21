@@ -30,6 +30,7 @@
 
 #include <CalibrationDepthPose/calibDepthPose.h>
 #include <CalibrationDepthPose/calibParameters.h>
+#include <CalibrationDepthPose/eigenUtils.h>
 
 #include "exampleUtils.h"
 
@@ -67,7 +68,7 @@ int main(int argc, char* argv[])
 
   // Load pointclouds
   std::vector<CalibrationDepthPose::Pointcloud::Ptr> pointclouds;
-  std::vector<Eigen::Isometry3d, Eigen::aligned_allocator<Eigen::Isometry3d>> poses;
+  CalibrationDepthPose::Isometry3d_vector poses;
   // set the noise level
   double noise_stddev = 0.0;
   try {

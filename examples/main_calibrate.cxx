@@ -30,6 +30,7 @@
 
 #include <CalibrationDepthPose/calibParameters.h>
 #include <CalibrationDepthPose/calibDepthPose.h>
+#include <CalibrationDepthPose/eigenUtils.h>
 
 #include "exampleUtils.h"
 
@@ -46,6 +47,8 @@ int main(int argc, char* argv[])
     std::cerr << "Usage:\n\t calibrate dataset_file configuration_file\n" << std::endl;
     return -1;
   }
+
+  std::chrono::system_clock::time_point start_t = std::chrono::system_clock::now();
 
 
   // Load calibration parameters
@@ -107,7 +110,7 @@ int main(int argc, char* argv[])
 
   // Load pointclouds
   std::vector<CalibrationDepthPose::Pointcloud::Ptr> pointclouds;
-  std::vector<Eigen::Isometry3d, Eigen::aligned_allocator<Eigen::Isometry3d>> poses;
+  CalibrationDepthPose::Isometry3d_vector poses;
   for (auto const& s : pc_files)
   {
     CalibrationDepthPose::Pointcloud::Ptr pc(new CalibrationDepthPose::Pointcloud());
@@ -179,6 +182,11 @@ int main(int argc, char* argv[])
   pcl::io::savePLYFile("colored_" + std::to_string(nb_iterations) + ".ply", *concat);
 
   std::cout << "Estimated calibration: " << estimatedCalib << std::endl;
+
+  std::chrono::system_clock::time_point end_t = std::chrono::system_clock::now();
+  double duration = std::chrono::duration_cast<std::chrono::seconds>(end_t - start_t).count();
+  std::cout << "\nDone in " << duration << " s" << std::endl;
+
 
   return 0;
 }

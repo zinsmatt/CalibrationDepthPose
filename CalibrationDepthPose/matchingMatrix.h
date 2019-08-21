@@ -53,9 +53,12 @@ public:
     return matrix.cols();
   }
 
+  void setFromPredefinedMatchingStrategy(PairsMatchingStrategy const& strategy);
+
+  std::vector<std::pair<size_t, size_t> > getPairs() const;
+
   friend std::ostream& operator <<(std::ostream& os, MatchingMatrix const& matrix);
 
-  void setFromPredefinedMatchingStrategy(PairsMatchingStrategy const& strategy);
 
 private:
   BooleanMatrix matrix;

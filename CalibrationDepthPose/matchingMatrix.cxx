@@ -37,6 +37,22 @@ void MatchingMatrix::setFromPredefinedMatchingStrategy(const PairsMatchingStrate
   }
 }
 
+std::vector<std::pair<size_t, size_t> > MatchingMatrix::getPairs() const
+{
+  std::vector< std::pair<size_t, size_t> > matchedPairs;
+  for (size_t idx1 = 0; idx1 < this->getSize(); ++idx1)
+  {
+    for (size_t idx2 = 0; idx2 < this->getSize(); ++idx2)
+    {
+      if (idx1 != idx2 && matrix(idx1, idx2))
+      {
+        matchedPairs.emplace_back(idx1, idx2);
+      }
+    }
+  }
+  return matchedPairs;
+}
+
 std::ostream &operator <<(std::ostream &os, const MatchingMatrix &matrix)
 {
   return os << matrix.matrix;

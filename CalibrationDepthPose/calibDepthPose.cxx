@@ -21,7 +21,6 @@
 
 #include "calibCostFunctions.h"
 #include "matchingTools.h"
-#include "threadPool.h"
 
 
 namespace
@@ -46,10 +45,10 @@ namespace CalibrationDepthPose
 {
 
 CalibDepthPose::CalibDepthPose(const std::vector<Pointcloud::Ptr> &pointclouds,
-                               const std::vector<Eigen::Isometry3d,
-                               Eigen::aligned_allocator<Eigen::Isometry3d>> &poses,
+                               const Isometry3d_vector &poses,
                                const Eigen::Isometry3d &initial_calib)
-  : m_pointclouds(pointclouds), m_poses(poses), m_matchMatrix(MatchingMatrix(pointclouds.size()))
+  : m_pointclouds(pointclouds), m_poses(poses), m_matchMatrix(MatchingMatrix(pointclouds.size())),
+    m_pool(ThreadPool(std::thread::hardware_concurrency() * 2 + 1))
 {
   m_calib.fromIsometry3d(initial_calib);
 }
@@ -65,72 +64,45 @@ Eigen::Isometry3d CalibDepthPose::calibrate(int nbIterations, CalibParameters *p
 
 void CalibDepthPose::calibIteration(CalibParameters *params)
 {
-//  std::vector<std::vector<Eigen::Vector3d>> keep_pts1, keep_pts2, keep_normals;
-//  std::vector<Eigen::Isometry3d> keep_posesDiff;
-  unsigned int totalNbMatches = 0;
-//  for (size_t idx1 = 0; idx1 < m_pointclouds.size(); ++idx1)
-//  {
-//    for (size_t idx2 = 0; idx2 < m_pointclouds.size(); ++idx2)
-//    {
-//      if (idx1 == idx2 || !m_matchMatrix(idx1, idx2))
-//        continue;
-//      auto [pts1, pts2, normals] = matchPointClouds(m_pointclouds[idx1], m_pointclouds[idx2],
-//          m_poses[idx1] * m_calib.toIsometry3d() , m_poses[idx2] * m_calib.toIsometry3d(), params);
-//      nbTotalMatches += pts1.size();
-//// saveMatches(pts1, pts2, "matches_" + std::to_string(idx1) + "_" + std::to_string(idx2) + ".obj");
+  // Get the list of point clouds pairs to match
+  auto matchedPairs = m_matchMatrix.getPairs();
+  std::cout << matchedPairs.size() << " pairs of matched point clouds" << std::endl;
 
-//      keep_pts1.emplace_back(std::move(pts1));
-//      keep_pts2.emplace_back(std::move(pts2));
-//      keep_normals.emplace_back(std::move(normals));
-//      keep_posesDiff.push_back(m_poses[idx2].inverse() * m_poses[idx1]);
-//    }
-//  }
-
-  std::vector< std::pair<size_t, size_t> > matchedPairs;
-
-  std::cout << "Hardware ocncurrency = " << std::thread::hardware_concurrency() << std::endl;
-  ThreadPool pool(std::thread::hardware_concurrency() * 2 + 1);
-
-  for (size_t idx1 = 0; idx1 < m_pointclouds.size(); ++idx1)
-  {
-    for (size_t idx2 = 0; idx2 < m_pointclouds.size(); ++idx2)
-    {
-      if (idx1 != idx2 && m_matchMatrix(idx1, idx2))
-      {
-        matchedPairs.emplace_back(idx1, idx2);
-        std::cout << "add pair " << idx1 << " " << idx2 << "\n";
-      }
-    }
-  }
-
-  std::vector<std::vector<Eigen::Vector3d>> keep_pts1(matchedPairs.size()),
-      keep_pts2(matchedPairs.size()), keep_normals(matchedPairs.size());
-  std::vector<Eigen::Isometry3d> keep_posesDiff(matchedPairs.size());
+  // Fill the thrad pool with matching tasks
+  std::vector< std::vector<Eigen::Vector3d> > keep_pts1(matchedPairs.size()),
+                                              keep_pts2(matchedPairs.size()),
+                                              keep_normals(matchedPairs.size());
+  Isometry3d_vector keep_posesDiff(matchedPairs.size());
   std::vector< std::future<unsigned int> > nbMatchedPoints;
-  for (size_t i = 0; i < matchedPairs.size(); ++i)
+  unsigned int totalNbMatchedPoints = 0;
+  for (size_t pair_index = 0; pair_index < matchedPairs.size(); ++pair_index)
   {
-    auto fct = [i, this, &params, &matchedPairs,
-        &keep_pts1, &keep_pts2, &keep_normals, &keep_posesDiff]() {
-      auto [idx1, idx2] = matchedPairs[i];
+
+    auto matching_fct = [pair_index, this, &params, &matchedPairs, &keep_pts1,
+                         &keep_pts2, &keep_normals, &keep_posesDiff]()
+    {
+      // get the index of the two point clouds
+      auto [idx1, idx2] = matchedPairs[pair_index];
+      // match the two point clouds
       auto [pts1, pts2, normals] = matchPointClouds(this->m_pointclouds[idx1],
           this->m_pointclouds[idx2], this->m_poses[idx1] * this->m_calib.toIsometry3d(),
           this->m_poses[idx2] * this->m_calib.toIsometry3d(), params);
 
+      // save the result
       unsigned int nbMatches = pts1.size();
-      keep_pts1[i] = std::move(pts1);
-      keep_pts2[i] = std::move(pts2);
-      keep_normals[i] = std::move(normals);
-      keep_posesDiff[i] = m_poses[idx2].inverse() * m_poses[idx1];
+      keep_pts1[pair_index] = std::move(pts1);
+      keep_pts2[pair_index] = std::move(pts2);
+      keep_normals[pair_index] = std::move(normals);
+      keep_posesDiff[pair_index] = m_poses[idx2].inverse() * m_poses[idx1];
       return nbMatches;
     };
-          std::cout << "before emplace " << i << std::endl;
-    nbMatchedPoints.emplace_back(pool.enqueue(fct));
-          std::cout << "after emplace " << i << std::endl;
+
+    nbMatchedPoints.emplace_back(m_pool.enqueue(matching_fct));
   }
 
   for (auto&& n : nbMatchedPoints)
   {
-    totalNbMatches += n.get();
+    totalNbMatchedPoints += n.get();
   }
 
   // Optimization: Non-linear least_square with Ceres
@@ -152,7 +124,7 @@ void CalibDepthPose::calibIteration(CalibParameters *params)
                                 new ceres::QuaternionParameterization(),
                                 new ceres::IdentityParameterization(3)));
 
-  std::cout << "Total matches = " << totalNbMatches << std::endl;
+  std::cout << "Total matched points: " << totalNbMatchedPoints << std::endl;
 
   ceres::Solver::Options options;
   options.linear_solver_type = ceres::DENSE_QR;
